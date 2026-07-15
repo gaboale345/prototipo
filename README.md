@@ -1,38 +1,163 @@
-# auto-lavado-vue
+# 🚗 EcoWash Móvil
 
-This template should help get you started developing with Vue 3 in Vite.
+## Plataforma web para servicio de lavado de autos a domicilio
 
-## Recommended IDE Setup
+Proyecto desarrollado para la materia **Programación Web II**. El objetivo es presentar un prototipo funcional de una solución digital para gestionar reservas, usuarios y operaciones de un negocio de lavado de autos en línea.
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+---
 
-## Recommended Browser Setup
+## 📖 Descripción del proyecto
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+EcoWash Móvil es una propuesta de plataforma web orientada a facilitar la contratación de servicios de lavado de vehículos a domicilio. La idea principal es ofrecer una experiencia simple para que los clientes puedan registrarse, solicitar servicios y hacer seguimiento de sus pedidos, mientras el negocio puede organizar mejor sus operaciones.
 
-## Customize configuration
+---
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## 🎯 Objetivo
 
-## Project Setup
+Desarrollar un prototipo que permita visualizar la lógica de negocio de una plataforma de lavado de autos a domicilio, incluyendo:
 
-```sh
-npm install
-```
+- registro e inicio de sesión de usuarios
+- gestión de servicios y reservas
+- organización de empleados y operaciones
+- simulación de procesos de pago y facturación
 
-### Compile and Hot-Reload for Development
+---
 
-```sh
-npm run dev
-```
+## 🛠 Tecnologías utilizadas
 
-### Compile and Minify for Production
+- HTML5
+- CSS3
+- Bootstrap 5
+- JavaScript
+- PHP
+- CakePHP 5
+- MySQL
+- Draw.io
+- dbdiagram.io
+- Git
+- GitHub
 
-```sh
-npm run build
-```
+---
+
+## 👥 Actores del sistema
+
+- Cliente
+- Empleado
+- Administrador
+
+---
+
+## ✨ Funcionalidades contempladas
+
+- Registro de usuarios
+- Inicio de sesión
+- Gestión de vehículos
+- Solicitud de servicios
+- Reservas
+- Pagos
+- Facturación
+- Gestión de empleados
+- Inventario
+- Reportes
+- Calificaciones
+- Notificaciones
+
+---
+
+## 🖼 Wireframes y mockups
+
+A continuación se muestran los bocetos visuales del prototipo:
+
+### Integrantes del equipo
+
+![Integrantes del equipo](wireframes/integrantes.jpeg)
+
+### 1. Inicio de sesión
+
+Pantalla principal para el acceso de clientes, empleados y administradores.
+
+![Inicio de sesión](wireframes/login.jpeg)
+
+### 2. Registro de cliente
+
+Formulario para crear una nueva cuenta en la plataforma.
+
+![Registro](wireframes/registro.jpeg)
+
+---
+## 5. Panel del Empleado
+
+Permite aceptar y gestionar los servicios asignados.
+
+![Panel Empleado](wireframes/gestion.jpg)
+
+---
+
+## 6. Panel del Administrador
+
+Control general del emprendimiento.
+
+![Panel Administrador](wireframes/control.jpg)
+
+---
+
+# 📊 Módulos del Sistema
+
+- Usuarios
+- Roles
+- Permisos
+- Clientes
+- Empleados
+- Vehículos
+- Reservas
+- Productos
+- Categorías
+- Inventario
+- Compras
+- Proveedores
+- Ventas
+- Pagos
+- Facturación
+- Reportes
+- Auditoría
+- Notificaciones
+- Calificaciones
+- Ubicaciones
+
+---
+
+# 📂 Base de Datos
+
+El proyecto contiene:
+
+- Diagrama Relacional (dbdiagram.io)
+- Modelo UML de Clases
+- Diagrama de Casos de Uso
+- Base de datos MySQL
+
+---
+
+Panel principal donde el cliente administra sus reservas y vehículos.
+
+![Dashboard Cliente](wireframes/mockup-panel.jpeg)
+
+---
+
+## 4. Solicitar Servicio
+
+Pantalla para reservar un lavado de vehículo.
+
+![Solicitar Servicio](wireframes/mockup-agenda.jpeg)
+
+---
+## 📁 Estructura del repositorio
+
+- [README.md](README.md): descripción general del proyecto
+- [wireframes/](wireframes/): archivos visuales del prototipo
+
+---
+
+## 🔗 Enlace del repositorio
+
+- GitHub: https://github.com/gaboale345/prototipo
+
