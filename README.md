@@ -85,6 +85,15 @@ Formulario para crear una nueva cuenta en la plataforma.
 ![Registro](wireframes/registro.jpeg)
 
 ---
+
+## 4. Solicitar Servicio
+
+Pantalla para reservar un lavado de vehículo.
+
+![Solicitar Servicio](wireframes/mockup-agenda.jpeg)
+
+---
+
 ## 5. Panel del Empleado
 
 Permite aceptar y gestionar los servicios asignados.
@@ -143,13 +152,6 @@ Panel principal donde el cliente administra sus reservas y vehículos.
 
 ---
 
-## 4. Solicitar Servicio
-
-Pantalla para reservar un lavado de vehículo.
-
-![Solicitar Servicio](wireframes/mockup-agenda.jpeg)
-
----
 ## 📁 Estructura del repositorio
 
 - [README.md](README.md): descripción general del proyecto
