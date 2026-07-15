@@ -85,7 +85,57 @@ Formulario para crear una nueva cuenta en la plataforma.
 ![Registro](wireframes/registro.jpeg)
 
 ---
-## 3. Dashboard del Cliente
+## 5. Panel del Empleado
+
+Permite aceptar y gestionar los servicios asignados.
+
+![Panel Empleado](wireframes/gestion.jpg)
+
+---
+
+## 6. Panel del Administrador
+
+Control general del emprendimiento.
+
+![Panel Administrador](wireframes/control.jpg)
+
+---
+
+# 📊 Módulos del Sistema
+
+- Usuarios
+- Roles
+- Permisos
+- Clientes
+- Empleados
+- Vehículos
+- Reservas
+- Productos
+- Categorías
+- Inventario
+- Compras
+- Proveedores
+- Ventas
+- Pagos
+- Facturación
+- Reportes
+- Auditoría
+- Notificaciones
+- Calificaciones
+- Ubicaciones
+
+---
+
+# 📂 Base de Datos
+
+El proyecto contiene:
+
+- Diagrama Relacional (dbdiagram.io)
+- Modelo UML de Clases
+- Diagrama de Casos de Uso
+- Base de datos MySQL
+
+---
 
 Panel principal donde el cliente administra sus reservas y vehículos.
 
