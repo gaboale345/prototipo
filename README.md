@@ -137,6 +137,19 @@ El proyecto contiene:
 
 ---
 
+Panel principal donde el cliente administra sus reservas y vehículos.
+
+![Dashboard Cliente](wireframes/mockup-panel.jpeg)
+
+---
+
+## 4. Solicitar Servicio
+
+Pantalla para reservar un lavado de vehículo.
+
+![Solicitar Servicio](wireframes/mockup-agenda.jpeg)
+
+---
 ## 📁 Estructura del repositorio
 
 - [README.md](README.md): descripción general del proyecto
