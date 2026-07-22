@@ -70,19 +70,19 @@ A continuación se muestran los bocetos visuales del prototipo:
 
 ### Integrantes del equipo
 
-![Integrantes del equipo](wireframes/integrantes.jpeg)
+![Integrantes del equipo](Frontend/wireframes/integrantes.jpeg)
 
 ### 1. Inicio de sesión
 
 Pantalla principal para el acceso de clientes, empleados y administradores.
 
-![Inicio de sesión](wireframes/login.jpeg)
+![Inicio de sesión](Frontend/wireframes/login.jpeg)
 
 ### 2. Registro de cliente
 
 Formulario para crear una nueva cuenta en la plataforma.
 
-![Registro](wireframes/registro.jpeg)
+![Registro](Frontend/wireframes/registro.jpeg)
 
 ---
 
@@ -90,7 +90,7 @@ Formulario para crear una nueva cuenta en la plataforma.
 
 Pantalla para reservar un lavado de vehículo.
 
-![Solicitar Servicio](wireframes/mockup-agenda.jpeg)
+![Solicitar Servicio](Frontend/wireframes/mockup-agenda.jpeg)
 
 ---
 
@@ -98,7 +98,7 @@ Pantalla para reservar un lavado de vehículo.
 
 Permite aceptar y gestionar los servicios asignados.
 
-![Panel Empleado](wireframes/gestion.jpg)
+![Panel Empleado](Frontend/wireframes/gestion.jpg)
 
 ---
 
@@ -106,7 +106,7 @@ Permite aceptar y gestionar los servicios asignados.
 
 Control general del emprendimiento.
 
-![Panel Administrador](wireframes/control.jpg)
+![Panel Administrador](Frontend/wireframes/control.jpg)
 
 ---
 
@@ -155,11 +155,10 @@ Panel principal donde el cliente administra sus reservas y vehículos.
 ## 📁 Estructura del repositorio
 
 - [README.md](README.md): descripción general del proyecto
-- [wireframes/](wireframes/): archivos visuales del prototipo
+- [Frontend/wireframes/](Frontend/wireframes/): archivos visuales del prototipo
 
 ---
 
 ## 🔗 Enlace del repositorio
 
 - GitHub: https://github.com/gaboale345/prototipo
-
