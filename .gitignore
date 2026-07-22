@@ -37,3 +37,7 @@ __screenshots__/
 
 # Vite
 *.timestamp-*-*.mjs
+
+# Ignorar compilaciones del Backend en C#
+**/bin/
+**/obj/
