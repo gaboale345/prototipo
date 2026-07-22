@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "dgSpecHash": "kfpB3RluGYc=",
+  "success": false,
+  "projectFilePath": "C:\\Users\\HP\\OneDrive\\Escritorio\\Programacion Web II\\ProyectoCarWash\\BackendProy\\BackendProy.csproj",
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "NU1301",
+      "level": "Error",
+      "message": "El origen local \"C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages\" no existe.",
+      "projectPath": "C:\\Users\\HP\\OneDrive\\Escritorio\\Programacion Web II\\ProyectoCarWash\\BackendProy\\BackendProy.csproj",
+      "filePath": "C:\\Users\\HP\\OneDrive\\Escritorio\\Programacion Web II\\ProyectoCarWash\\BackendProy\\BackendProy.csproj",
+      "libraryId": "Microsoft.AspNetCore.OpenApi",
+      "targetGraphs": []
+    }
+  ]
+}
