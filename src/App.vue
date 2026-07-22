@@ -1,8 +1,4 @@
 <script setup>
-import ServiceCard from './components/ServiceCard.vue'
-import BookingForm from './components/BookingForm.vue'
-
-<script setup>
 import EncabezadoApp from './components/EncabezadoApp.vue';
 
 </script>
