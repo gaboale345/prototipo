@@ -1,0 +1,45 @@
+# ===========================
+# .NET / ASP.NET Core
+# ===========================
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.dbmdl
+*.jfm
+*.pfx
+*.publishsettings
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# SQLite
+*.db-shm
+*.db-wal
+
+# ===========================
+# Node.js / Vue / Frontend
+# ===========================
+node_modules/
+dist/
+.vite/
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

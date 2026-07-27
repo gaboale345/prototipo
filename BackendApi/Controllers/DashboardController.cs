@@ -80,13 +80,14 @@ namespace BackendApi.Controllers
                         FechaPago = p.FechaPago
                     }).ToListAsync(),
 
-                ServiciosMasSolicitados = await _context.Reservas
+                ServiciosMasSolicitados = (await _context.Reservas
                     .Include(r => r.Servicio)
                     .GroupBy(r => r.Servicio.Nombre)
                     .Select(g => new GraficoDto { Etiqueta = g.Key, Valor = g.Count() })
+                    .ToListAsync())
                     .OrderByDescending(g => g.Valor)
                     .Take(5)
-                    .ToListAsync()
+                    .ToList()
             };
 
             return Ok(ApiResponse<DashboardAdminDto>.Ok(dto));
