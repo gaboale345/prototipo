@@ -17,11 +17,18 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import Navbar from './components/Navbar.vue'
 import Sidebar from './components/Sidebar.vue'
 import { useAuthStore } from './stores/authStore'
+import { useThemeStore } from './stores/themeStore'
 import { useRoute } from 'vue-router'
 
 const authStore = useAuthStore()
+const themeStore = useThemeStore()
 const route = useRoute()
+
+onMounted(() => {
+  themeStore.applyTheme()
+})
 </script>
