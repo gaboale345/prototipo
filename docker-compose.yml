@@ -19,7 +19,7 @@ services:
 
   # Contenedor 2: Backend API (ASP.NET Core 8)
   backend:
-    image: gaboale345/ecowash-backend:latest
+    image: escorpion124/ecowash-backend:latest
     build:
       context: ./BackendApi
       dockerfile: Dockerfile
@@ -40,7 +40,7 @@ services:
 
   # Contenedor 3: Frontend (Vue.js 3 + Nginx)
   frontend:
-    image: gaboale345/ecowash-frontend:latest
+    image: escorpion124/ecowash-frontend:latest
     build:
       context: ./Frontend
       dockerfile: Dockerfile
