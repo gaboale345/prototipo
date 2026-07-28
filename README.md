@@ -524,7 +524,60 @@ onMounted(async () => {
 
 ---
 
-## 🚀 Guía de Instalación y Ejecución Local
+## 🐳 Fundamentos de Docker y Contenerización de Proyecto
+
+El proyecto **EcoWash Móvil** incluye soporte completo de contenerización con **Docker** y **Docker Compose**, lo que resuelve el problema del *"En mi computadora funciona"* al garantizar entornos aislados, idénticos y reproducibles en cualquier sistema.
+
+### ❓ El Problema del "En mi computadora funciona"
+Diferencias de versión en Node.js, MySQL, .NET SDK o extensiones del SO provocan fallas al trasladar proyectos entre computadoras. Docker elimina estas diferencias encapsulando el código, runtime y dependencias dentro de contenedores reproducibles.
+
+### 📊 Máquinas Virtuales vs. Contenedores
+| Característica | Máquina Virtual | Contenedor (Docker) |
+|----------------|-----------------|---------------------|
+| **Sistema Operativo** | Incluye SO huésped completo | Comparte el Kernel del SO anfitrión |
+| **Tiempo de inicio** | Minutos | Segundos |
+| **Consumo de recursos** | Alto | Bajo y eficiente |
+| **Portabilidad** | Buena | Muy buena |
+| **Aislamiento** | A nivel de Hardware | A nivel de Procesos |
+
+### 🧩 Arquitectura de 3 Contenedores del Proyecto
+```
+Usuario → Navegador → Contenedor Frontend (Vue 3 + Nginx :80)
+                             │ Proxy /api/
+                      Contenedor Backend (ASP.NET Core 8 API :5275)
+                             │ SQL Connection
+                      Contenedor Database (MySQL 8.0 :3306)
+```
+
+1. **Contenedor Frontend (Vue 3 + Nginx):** Servidor web Nginx que sirve la SPA compilada de Vue 3 en el puerto 80 y realiza proxy inverso hacia la API.
+2. **Contenedor Backend API (ASP.NET Core 8):** Ejecuta la lógica REST API, controladores y autenticación JWT.
+3. **Contenedor Base de Datos (MySQL 8.0):** Almacena las tablas relacionales y mantiene los datos persistentes mediante un **Volumen Docker** (`db_data`).
+
+> 📖 **Documentación Teórica Completa:** Consulta la guía extendida en [`docs/DOCKER.md`](file:///c:/Users/SCPC411/Downloads/pro2.0/docs/DOCKER.md) para ver los diagramas conceptuales, Dockerfile multi-stage y despliegue en AWS EC2.
+
+---
+
+## ⚡ Ejecución Instantánea con Docker Compose
+
+Si tienes **Docker Desktop** instalado, puedes iniciar todo el ecosistema (Frontend + Backend + MySQL) con un solo comando:
+
+```bash
+docker compose up -d
+```
+
+- 🌐 **Frontend (Vue 3 + Nginx):** `http://localhost:80` o `http://localhost:5173`
+- ⚙️ **Backend API (ASP.NET Core):** `http://localhost:5275`
+- 📖 **Swagger UI:** `http://localhost:5275/swagger`
+- 🗄️ **Base de Datos MySQL:** Puerto `3306` (`user: root`, `pass: root`, `db: ecowash_db`)
+
+Para detener los contenedores:
+```bash
+docker compose down
+```
+
+---
+
+## 🚀 Guía de Instalación y Ejecución Local (Sin Docker)
 
 ### Prerrequisitos
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)

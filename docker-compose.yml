@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # Contenedor 1: Base de Datos MySQL
+  database:
+    image: mysql:8.0
+    container_name: ecowash_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ecowash_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./script_ecowash_db.sql:/docker-entrypoint-initdb.d/script_ecowash_db.sql
+    networks:
+      - ecowash_network
+
+  # Contenedor 2: Backend API (ASP.NET Core 8)
+  backend:
+    build:
+      context: ./BackendApi
+      dockerfile: Dockerfile
+    container_name: ecowash_backend
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - DB_HOST=database
+      - ConnectionStrings__DefaultConnection=Server=database;Database=ecowash_db;User=root;Password=root;
+    ports:
+      - "5275:80"
+    depends_on:
+      - database
+    volumes:
+      - backend_data:/app
+    networks:
+      - ecowash_network
+
+  # Contenedor 3: Frontend (Vue.js 3 + Nginx)
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: ecowash_frontend
+    restart: always
+    ports:
+      - "80:80"
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - ecowash_network
+
+volumes:
+  db_data:
+    driver: local
+  backend_data:
+    driver: local
+
+networks:
+  ecowash_network:
+    driver: bridge
