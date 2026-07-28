@@ -31,7 +31,18 @@
       <div class="col-md-8">
         <div class="ecowash-card">
           <h5 class="fw-bold mb-3">Historial de Reportes Generados</h5>
-          <div class="table-responsive">
+          
+          <div v-if="loadingCarga" class="text-center py-4 text-muted">
+            <span class="spinner-border spinner-border-sm me-2"></span> Cargando reportes...
+          </div>
+
+          <div v-else-if="reportes.length === 0" class="text-center py-5">
+            <i class="bi bi-bar-chart-line text-muted display-4 d-block mb-3"></i>
+            <h6 class="fw-semibold text-dark">No hay reportes en el historial</h6>
+            <p class="text-muted small">Selecciona el tipo de reporte en el formulario de la izquierda y haz clic en <strong>"Generar Reporte"</strong> para procesar las estadísticas.</p>
+          </div>
+
+          <div v-else class="table-responsive">
             <table class="table table-hover align-middle">
               <thead>
                 <tr>
@@ -46,7 +57,11 @@
                   <td class="fw-semibold">{{ r.nombre }}</td>
                   <td><span class="badge bg-info text-dark">{{ r.tipo }}</span></td>
                   <td>{{ formatDate(r.fechaGeneracion) }}</td>
-                  <td><pre class="bg-light p-2 rounded small mb-0" style="max-height: 80px;">{{ r.datos }}</pre></td>
+                  <td>
+                    <div class="bg-light p-2 rounded small" style="max-height: 120px; overflow-y: auto;">
+                      {{ parseDatos(r.datos) }}
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -64,13 +79,19 @@ import Swal from 'sweetalert2'
 
 const reportes = ref([])
 const loading = ref(false)
+const loadingCarga = ref(true)
 const form = ref({ tipo: 'VentasDiarias' })
 
 const cargar = async () => {
+  loadingCarga.value = true
   try {
     const res = await api.get('/Reporte')
     if (res.data.success) reportes.value = res.data.data
-  } catch (e) {}
+  } catch (e) {
+    console.error("Error al cargar reportes:", e)
+  } finally {
+    loadingCarga.value = false
+  }
 }
 
 onMounted(cargar)
@@ -86,6 +107,24 @@ const generar = async () => {
     }
   } catch (e) {
     loading.value = false
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: e.response?.data?.message || 'No se pudo generar el reporte. Verifica que tu usuario tenga rol Administrador.'
+    })
+  }
+}
+
+const parseDatos = (datosStr) => {
+  try {
+    const parsed = JSON.parse(datosStr)
+    if (Array.isArray(parsed)) {
+      if (parsed.length === 0) return 'Sin registros en el periodo'
+      return parsed.map(item => JSON.stringify(item).replace(/[\{\}"]/g, '').replace(/,/g, ' | ')).join('\n')
+    }
+    return JSON.stringify(parsed)
+  } catch {
+    return datosStr || 'Sin datos'
   }
 }
 

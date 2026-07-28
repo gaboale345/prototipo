@@ -33,25 +33,26 @@ namespace BackendApi.Controllers
         {
             // REGLA DE NEGOCIO: Solo el administrador puede generar reportes.
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
-            var inicio = dto.FechaInicio ?? DateTime.UtcNow.AddDays(-30);
-            var fin = dto.FechaFin ?? DateTime.UtcNow;
+            var inicio = dto.FechaInicio ?? DateTime.MinValue;
+            var fin = dto.FechaFin ?? DateTime.UtcNow.AddDays(1);
 
             object resultadoDatos = dto.Tipo switch
             {
                 "VentasDiarias" => await _context.Ventas
-                    .Where(v => v.FechaVenta >= inicio && v.FechaVenta <= fin && v.Estado == "Pagada")
+                    .Where(v => v.FechaVenta >= inicio && v.FechaVenta <= fin && v.Estado != "Cancelada")
                     .GroupBy(v => v.FechaVenta.Date)
                     .Select(g => new { Fecha = g.Key.ToString("yyyy-MM-dd"), TotalVentas = g.Count(), TotalIngresos = g.Sum(x => x.Total) })
                     .ToListAsync(),
 
                 "VentasMensuales" => await _context.Ventas
-                    .Where(v => v.FechaVenta >= inicio && v.FechaVenta <= fin && v.Estado == "Pagada")
+                    .Where(v => v.FechaVenta >= inicio && v.FechaVenta <= fin && v.Estado != "Cancelada")
                     .GroupBy(v => new { v.FechaVenta.Year, v.FechaVenta.Month })
                     .Select(g => new { Año = g.Key.Year, Mes = g.Key.Month, TotalIngresos = g.Sum(x => x.Total) })
                     .ToListAsync(),
 
                 "ServiciosMasSolicitados" => await _context.Reservas
                     .Include(r => r.Servicio)
+                    .Where(r => r.Servicio != null)
                     .GroupBy(r => r.Servicio.Nombre)
                     .Select(g => new { Servicio = g.Key, Cantidad = g.Count() })
                     .OrderByDescending(x => x.Cantidad)
@@ -59,6 +60,7 @@ namespace BackendApi.Controllers
 
                 "ClientesFrecuentes" => await _context.Reservas
                     .Include(r => r.Cliente).ThenInclude(c => c.Usuario)
+                    .Where(r => r.Cliente != null && r.Cliente.Usuario != null)
                     .GroupBy(r => $"{r.Cliente.Usuario.Nombre} {r.Cliente.Usuario.Apellido}")
                     .Select(g => new { Cliente = g.Key, TotalReservas = g.Count() })
                     .OrderByDescending(x => x.TotalReservas)
