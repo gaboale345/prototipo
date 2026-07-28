@@ -204,52 +204,39 @@ Usuario → Navegador → Frontend (Vue.js) → API REST (ASP.NET Core) → Base
 > Diseño realizado siguiendo principios de **UI/UX**: colores corporativos `#2563EB`, responsive design, dark mode, micro-animaciones y glassmorphism.
 
 ### Pantalla 1 — Login (Inicio de Sesión)
-![Mockup Login](docs/mockups/mockup_login.png)
+![Mockup Login](docs/mockups/log.png)
 
 *Formulario de autenticación con JWT. Campos: email y contraseña. Redirige al Dashboard según rol del usuario.*
 
 ---
 
 ### Pantalla 2 — Dashboard Administrador
-![Mockup Dashboard Admin](docs/mockups/mockup_dashboard_admin.png)
+![Mockup Dashboard Admin](docs/mockups/adm.png)
 
 *Panel de control con estadísticas en tiempo real: Total Clientes, Ingresos del Mes, Reservas Activas, Empleados. Gráficos de barras de ventas y tabla de reservas recientes.*
 
 ---
 
 ### Pantalla 3 — Solicitar Reserva (Cliente)
-![Mockup Reserva Cliente](docs/mockups/mockup_reserva_cliente.png)
+![Mockup Reserva Cliente](docs/mockups/reserva.png)
 
 *Formulario de reserva: selección de vehículo, tipo de servicio con precio estimado, selección de ubicación, fecha y hora. Botón de confirmación.*
 
 ---
 
 ### Pantalla 4 — Gestión de Productos e Inventario (Admin)
-![Mockup Gestión Productos](docs/mockups/mockup_productos.png)
+![Mockup Gestión Productos](docs/mockups/productos.png)
 
 *Tabla CRUD de productos con columnas: nombre, categoría, stock actual, stock mínimo, precio. Alertas de stock bajo en rojo. Modal de crear/editar.*
 
 ---
 
-### Pantalla 5 — Mis Reservas (Cliente)
-![Mockup Mis Reservas](docs/mockups/mockup_mis_reservas.png)
-
-*Lista de reservas del cliente con badges de estado de colores: Pendiente, Aceptada, En Proceso, Finalizada, Cancelada. Botones: Ver Detalle, Pagar, Cancelar.*
-
----
-
-### Pantalla 6 — Reportes y Estadísticas (Admin)
-![Mockup Reportes](docs/mockups/mockup_reportes.png)
-
-*Dashboard de reportes con gráficos de dona e ingresos por tipo de servicio, gráfico de líneas de ventas mensuales, ranking de empleados y servicios más solicitados.*
-
----
 
 ## 🔌 Documentación de la API REST — Evidencias Swagger
 
 > El sistema implementa **20 controladores REST** con métodos GET, POST, PUT y DELETE. La documentación interactiva está disponible en `http://localhost:5275/swagger`.
 
-![Swagger UI - Evidencia de API](docs/mockups/mockup_swagger.png)
+![Swagger UI - Evidencia de API](docs/mockups/swagger.png)
 
 ### Controladores implementados
 
