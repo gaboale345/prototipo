@@ -3,6 +3,7 @@ import { useAuthStore } from '../stores/authStore'
 
 import LoginView from '../views/auth/LoginView.vue'
 import RegisterView from '../views/auth/RegisterView.vue'
+import LandingView from '../views/LandingView.vue'
 import DashboardAdminView from '../views/admin/DashboardAdminView.vue'
 import DashboardClienteView from '../views/cliente/DashboardClienteView.vue'
 import DashboardEmpleadoView from '../views/empleado/DashboardEmpleadoView.vue'
@@ -21,9 +22,9 @@ import EmpleadosAdminView from '../views/admin/EmpleadosAdminView.vue'
 import PerfilView from '../views/shared/PerfilView.vue'
 
 const routes = [
-  { path: '/', redirect: '/login' },
-  { path: '/login', component: LoginView, meta: { guestOnly: true } },
-  { path: '/registro', component: RegisterView, meta: { guestOnly: true } },
+  { path: '/', component: LandingView, meta: { publicLayout: true } },
+  { path: '/login', component: LoginView, meta: { guestOnly: true, publicLayout: true } },
+  { path: '/registro', component: RegisterView, meta: { guestOnly: true, publicLayout: true } },
 
   // Admin Routes
   { path: '/admin/dashboard', component: DashboardAdminView, meta: { requiresAuth: true, role: 'Administrador' } },

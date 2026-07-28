@@ -1,12 +1,52 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="es" class="scroll-smooth">
   <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vite App</title>
+    <title>EcoWash | Detailing Profesional a Domicilio</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@300,0,0,24" rel="stylesheet" />
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+            },
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            navy: '#0b2046',   /* Principal Oscuro */
+                            cyan: '#00b4d8',   /* Secundario (Agua/Limpieza) */
+                            coral: '#ff6f59',  /* Acento (Llamados a la acción) */
+                            light: '#f4f7f6',  /* Fondo base */
+                            dark: '#07152e'    /* Footer */
+                        }
+                    },
+                    boxShadow: {
+                        'float': '0 20px 40px -10px rgba(11, 32, 70, 0.15)',
+                        'coral-glow': '0 10px 25px -5px rgba(255, 111, 89, 0.4)',
+                        'cyan-glow': '0 10px 25px -5px rgba(0, 180, 216, 0.3)',
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
   </head>
-  <body>
+  <body class="antialiased selection:bg-brand-cyan selection:text-white">
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   </body>

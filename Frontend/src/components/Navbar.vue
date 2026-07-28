@@ -73,6 +73,6 @@ onMounted(async () => {
 
 const logout = () => {
   authStore.logout()
-  router.push('/login')
+  router.push('/')
 }
 </script>
