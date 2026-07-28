@@ -1,5 +1,5 @@
 # Estadio 1: Build de la app Vue 3 con Node.js
-FROM node:18-alpine AS build-stage
+FROM node:20-alpine AS build-stage
 WORKDIR /app
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
