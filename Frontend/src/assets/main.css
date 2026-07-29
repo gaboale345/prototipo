@@ -89,20 +89,7 @@ body {
   gap: 8px;
 }
 
-/* Sidebar styling */
-.sidebar-custom {
-  width: 260px;
-  background: #FFFFFF;
-  border-right: 1px solid var(--border-color);
-  min-height: calc(100vh - 64px);
-  padding: 1.5rem 1rem;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-.dark-mode .sidebar-custom {
-  background: #1E293B;
-  border-right: 1px solid var(--border-color);
-}
+/* Sidebar styling → ver sección RESPONSIVE al final */
 
 .nav-link-custom {
   display: flex;
@@ -318,3 +305,220 @@ body {
   color: #F8FAFC;
   border-color: #334155;
 }
+
+/* =========================================
+   RESPONSIVE / MOBILE STYLES
+   ========================================= */
+
+/* Hamburger button */
+.btn-hamburger {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s ease;
+  line-height: 1;
+}
+.btn-hamburger:hover {
+  background: var(--primary-light);
+  color: var(--primary-color);
+}
+.dark-mode .btn-hamburger {
+  color: #F8FAFC;
+}
+
+/* Notification button */
+.btn-notif {
+  background: transparent;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+.btn-notif:hover {
+  background: var(--primary-light);
+}
+
+/* User button */
+.btn-user {
+  background: transparent;
+  border: 1.5px solid var(--border-color);
+  color: var(--text-primary);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+.btn-user:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+.dark-mode .btn-user {
+  border-color: #334155;
+  color: #F8FAFC;
+}
+
+/* Notif dropdown width */
+.notif-dropdown {
+  width: min(320px, 90vw);
+}
+
+/* Brand text hide on very small */
+@media (max-width: 360px) {
+  .brand-text { display: none; }
+}
+
+/* ---- SIDEBAR MOBILE DRAWER ---- */
+
+/* En desktop: sidebar estático normal */
+.sidebar-custom {
+  width: 260px;
+  background: #FFFFFF;
+  border-right: 1px solid var(--border-color);
+  min-height: calc(100vh - 64px);
+  padding: 1.5rem 1rem;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  flex-shrink: 0;
+}
+
+.dark-mode .sidebar-custom {
+  background: #1E293B;
+}
+
+/* En móvil: sidebar oculto fuera de pantalla */
+@media (max-width: 767px) {
+  .sidebar-custom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px;
+    z-index: 1050;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.3s ease;
+    box-shadow: none;
+    padding-top: 1rem;
+    min-height: 100vh;
+  }
+
+  .sidebar-custom.sidebar-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18);
+  }
+}
+
+/* Botón cerrar sidebar móvil */
+.btn-close-sidebar {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+.btn-close-sidebar:hover {
+  background: var(--primary-light);
+  color: var(--primary-color);
+}
+.dark-mode .btn-close-sidebar {
+  color: #94A3B8;
+}
+
+/* Overlay oscuro detrás del sidebar en móvil */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1049;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ---- MAIN CONTENT ---- */
+.main-content {
+  padding: 1.5rem;
+}
+
+@media (max-width: 767px) {
+  .main-content {
+    padding: 1rem 0.75rem;
+  }
+}
+
+/* ---- STAT CARDS GRID ---- */
+@media (max-width: 575px) {
+  .stat-card {
+    padding: 1rem;
+  }
+  .stat-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+}
+
+/* ---- ECOWASH CARD ---- */
+@media (max-width: 575px) {
+  .ecowash-card {
+    padding: 1rem;
+  }
+}
+
+/* ---- TABLES ---- */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* En móvil, reducir padding de celdas */
+@media (max-width: 575px) {
+  .table-custom th,
+  .table-custom td,
+  .table th,
+  .table td {
+    padding: 10px 10px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ---- NAVBAR ADJUSTMENTS ---- */
+.navbar-custom {
+  min-height: 60px;
+}
+
+@media (max-width: 575px) {
+  .navbar-custom {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  .btn-sm-mobile {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ---- HEADINGS RESPONSIVE ---- */
+@media (max-width: 575px) {
+  h2.fw-bold {
+    font-size: 1.3rem;
+  }
+  h3.fw-bold {
+    font-size: 1.2rem;
+  }
+}
+
+/* ---- FIX: Remove Tailwind-like scrollbar hiding ---- */
+* {
+  box-sizing: border-box;
+}
+

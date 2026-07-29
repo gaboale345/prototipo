@@ -6,10 +6,23 @@
 
   <!-- Layout para el sistema interno (Dashboard) -->
   <div v-else class="min-vh-100 d-flex flex-column bg-light">
-    <Navbar />
-    <div class="d-flex flex-grow-1">
-      <Sidebar v-if="authStore.isAuthenticated" />
-      <main class="flex-grow-1 p-4 overflow-auto">
+    <Navbar @toggle-sidebar="toggleSidebar" />
+
+    <div class="d-flex flex-grow-1 position-relative">
+      <!-- Overlay oscuro en móvil cuando sidebar está abierto -->
+      <div
+        v-if="sidebarOpen"
+        class="sidebar-overlay d-md-none"
+        @click="sidebarOpen = false"
+      ></div>
+
+      <Sidebar
+        v-if="authStore.isAuthenticated"
+        :open="sidebarOpen"
+        @close="sidebarOpen = false"
+      />
+
+      <main class="flex-grow-1 main-content overflow-auto">
         <router-view />
       </main>
     </div>
@@ -17,7 +30,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import Navbar from './components/Navbar.vue'
 import Sidebar from './components/Sidebar.vue'
 import { useAuthStore } from './stores/authStore'
@@ -27,6 +40,12 @@ import { useRoute } from 'vue-router'
 const authStore = useAuthStore()
 const themeStore = useThemeStore()
 const route = useRoute()
+
+const sidebarOpen = ref(false)
+
+const toggleSidebar = () => {
+  sidebarOpen.value = !sidebarOpen.value
+}
 
 onMounted(() => {
   themeStore.applyTheme()

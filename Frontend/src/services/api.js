@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://localhost:5275/api', // URL donde corre la API C#
+  baseURL: '/api', // Ruta relativa: nginx redirige al backend (correcto en producción)
   headers: {
     'Content-Type': 'application/json'
   }
