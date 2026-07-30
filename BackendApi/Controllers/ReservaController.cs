@@ -54,7 +54,7 @@ namespace BackendApi.Controllers
                 query = query.Where(r => r.Estado.ToLower() == estado.ToLower());
             }
 
-            var result = await query.OrderByDescending(r => r.FechaProgramada)
+            var result = await query.OrderByDescending(r => r.FechaCreacion)
                 .Select(r => new ReservaDto
                 {
                     Id = r.Id,
@@ -87,11 +87,33 @@ namespace BackendApi.Controllers
             var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.UsuarioId == userId);
             if (cliente == null) return BadRequest(ApiResponse<ReservaDto>.Fail("Solo los clientes registrados pueden realizar reservas (Regla de Negocio)"));
 
+            // RF: Validación de fecha y hora (debe ser futura, no domingos, entre 9:00 y 17:00)
+            var ahora = DateTime.UtcNow;
+            if (dto.FechaProgramada <= ahora)
+                return BadRequest(ApiResponse<ReservaDto>.Fail("La fecha y hora de la reserva debe ser posterior al momento actual."));
+
+            if (dto.FechaProgramada.DayOfWeek == DayOfWeek.Sunday)
+                return BadRequest(ApiResponse<ReservaDto>.Fail("No se realizan servicios los domingos. Por favor selecciona un día de Lunes a Sábado."));
+
+            var hora = dto.FechaProgramada.TimeOfDay;
+            var horaInicio = new TimeSpan(9, 0, 0);
+            var horaFin = new TimeSpan(17, 0, 0);
+            if (hora < horaInicio || hora >= horaFin)
+                return BadRequest(ApiResponse<ReservaDto>.Fail($"El horario de atención es de 9:00 AM a 5:00 PM (Lunes a Sábado). La hora solicitada ({dto.FechaProgramada:HH:mm}) está fuera del horario permitido."));
+
             var servicio = await _context.Servicios.FindAsync(dto.ServicioId);
             if (servicio == null || !servicio.Activo) return BadRequest(ApiResponse<ReservaDto>.Fail("Servicio no disponible"));
 
             var vehiculo = await _context.Vehiculos.FirstOrDefaultAsync(v => v.Id == dto.VehiculoId && v.ClienteId == cliente.Id && v.Activo);
-            if (vehiculo == null) return BadRequest(ApiResponse<ReservaDto>.Fail("Vehículo no pertenece al cliente (Regla de Negocio)"));
+            if (vehiculo == null) return BadRequest(ApiResponse<ReservaDto>.Fail("Vehículo no pertenece al cliente o no está registrado (Regla de Negocio)"));
+
+            // RF: No permitir reserva duplicada con el mismo vehículo activo
+            var reservaActivaExistente = await _context.Reservas.AnyAsync(r =>
+                r.VehiculoId == dto.VehiculoId &&
+                r.ClienteId == cliente.Id &&
+                (r.Estado == "Pendiente" || r.Estado == "Aceptada" || r.Estado == "EnProceso"));
+            if (reservaActivaExistente)
+                return BadRequest(ApiResponse<ReservaDto>.Fail("Ya tienes una reserva activa (Pendiente, Aceptada o En Proceso) con este vehículo. Cancela la reserva anterior antes de crear una nueva."));
 
             var ubicacion = await _context.Ubicaciones.FirstOrDefaultAsync(u => u.Id == dto.UbicacionId && u.ClienteId == cliente.Id && u.Activo);
             if (ubicacion == null) return BadRequest(ApiResponse<ReservaDto>.Fail("Ubicación inválida"));
@@ -169,6 +191,51 @@ namespace BackendApi.Controllers
                 PrecioTotal = reserva.PrecioTotal,
                 FechaCreacion = reserva.FechaCreacion
             }, "Reserva realizada exitosamente"));
+        }
+
+        /// <summary>RF: Permite al cliente editar fecha y observaciones de una reserva en estado Pendiente.</summary>
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ApiResponse<string>>> EditarReserva(int id, [FromBody] EditarReservaDto dto)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+            var role = User.FindFirstValue(ClaimTypes.Role);
+
+            var reserva = await _context.Reservas
+                .Include(r => r.Cliente)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (reserva == null) return NotFound(ApiResponse<string>.Fail("Reserva no encontrada"));
+
+            // Solo el cliente dueño o el admin puede editar
+            if (role == "Cliente")
+            {
+                var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.UsuarioId == userId);
+                if (cliente == null || reserva.ClienteId != cliente.Id)
+                    return Forbid();
+            }
+
+            if (reserva.Estado != "Pendiente")
+                return BadRequest(ApiResponse<string>.Fail("Solo se pueden editar reservas en estado Pendiente."));
+
+            // Validaciones de fecha y hora
+            if (dto.FechaProgramada <= DateTime.UtcNow)
+                return BadRequest(ApiResponse<string>.Fail("La fecha debe ser posterior al momento actual."));
+
+            if (dto.FechaProgramada.DayOfWeek == DayOfWeek.Sunday)
+                return BadRequest(ApiResponse<string>.Fail("No se realizan servicios los domingos."));
+
+            var hora = dto.FechaProgramada.TimeOfDay;
+            if (hora < new TimeSpan(9, 0, 0) || hora >= new TimeSpan(17, 0, 0))
+                return BadRequest(ApiResponse<string>.Fail("El horario de atención es de 9:00 AM a 5:00 PM."));
+
+            var anterior = new { reserva.FechaProgramada, reserva.Observaciones };
+            reserva.FechaProgramada = dto.FechaProgramada;
+            reserva.Observaciones = dto.Observaciones;
+            await _context.SaveChangesAsync();
+
+            await _auditoria.RegistrarAsync("EditarReserva", "Reservas", "Reserva", id, anterior, dto, userId);
+
+            return Ok(ApiResponse<string>.Ok("Reserva actualizada correctamente"));
         }
 
         [HttpPut("{id}/estado")]

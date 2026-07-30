@@ -22,7 +22,7 @@ import EmpleadosAdminView from '../views/admin/EmpleadosAdminView.vue'
 import PerfilView from '../views/shared/PerfilView.vue'
 
 const routes = [
-  { path: '/', component: LandingView, meta: { publicLayout: true } },
+  { path: '/', redirect: '/login' },
   { path: '/login', component: LoginView, meta: { guestOnly: true, publicLayout: true } },
   { path: '/registro', component: RegisterView, meta: { guestOnly: true, publicLayout: true } },
 

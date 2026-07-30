@@ -5,7 +5,7 @@
         <h3 class="fw-bold mb-1">Mis Vehículos</h3>
         <p class="text-muted small">Registra y administra tus vehículos para los lavados</p>
       </div>
-      <button @click="showModal = true" class="btn btn-primary-custom">
+      <button @click="abrirNuevoModal" class="btn btn-primary-custom">
         <i class="bi bi-plus-lg me-1"></i> Registrar Vehículo
       </button>
     </div>
@@ -16,9 +16,16 @@
         <div class="ecowash-card">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <span class="badge bg-secondary">{{ v.tipo }}</span>
-            <button @click="eliminar(v.id)" class="btn btn-sm btn-outline-danger border-0"><i class="bi bi-trash"></i></button>
+            <div class="d-flex gap-1">
+              <button @click="abrirEditarModal(v)" class="btn btn-sm btn-outline-warning border-0" title="Editar vehículo">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button @click="eliminar(v.id)" class="btn btn-sm btn-outline-danger border-0" title="Eliminar vehículo">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
           </div>
-          <h4 class="fw-bold mb-1">{{ v.marca }} {{ v.modelo }}</h4>
+          <h4 class="fw-bold mb-1">{{ v.marca || 'Vehículo' }} {{ v.modelo }}</h4>
           <div class="fs-5 text-primary fw-extrabold mb-2">Placa: {{ v.placa }}</div>
           <div class="small text-muted">Año: {{ v.año || 'N/A' }} | Color: {{ v.color || 'N/A' }}</div>
         </div>
@@ -29,18 +36,18 @@
       </div>
     </div>
 
-    <!-- MODAL REGISTRO VEHÍCULO -->
-    <div v-if="showModal" class="modal fade show d-block" style="background: rgba(0,0,0,0.5);">
+    <!-- MODAL REGISTRO / EDICIÓN VEHÍCULO -->
+    <div v-if="showModal" class="modal fade show d-block" style="background: rgba(0,0,0,0.5);" @click.self="showModal = false">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
           <div class="modal-header">
-            <h5 class="modal-title fw-bold">Registrar Nuevo Vehículo</h5>
+            <h5 class="modal-title fw-bold">{{ editMode ? 'Editar Vehículo' : 'Registrar Nuevo Vehículo' }}</h5>
             <button type="button" class="btn-close" @click="showModal = false"></button>
           </div>
           <form @submit.prevent="guardar">
             <div class="modal-body">
               <div class="mb-3">
-                <label class="form-label fw-semibold">Placa</label>
+                <label class="form-label fw-semibold">Placa del Vehículo</label>
                 <input type="text" v-model="form.placa" class="form-control" placeholder="Ej: 4589-XYZ" required />
               </div>
               <div class="mb-3">
@@ -74,7 +81,9 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" @click="showModal = false">Cancelar</button>
-              <button type="submit" class="btn btn-primary-custom">Guardar Vehículo</button>
+              <button type="submit" class="btn btn-primary-custom">
+                {{ editMode ? 'Actualizar Vehículo' : 'Guardar Vehículo' }}
+              </button>
             </div>
           </form>
         </div>
@@ -90,6 +99,8 @@ import Swal from 'sweetalert2'
 
 const vehiculos = ref([])
 const showModal = ref(false)
+const editMode = ref(false)
+const selectedId = ref(null)
 
 const form = ref({
   placa: '',
@@ -109,17 +120,49 @@ const cargarVehiculos = async () => {
 
 onMounted(cargarVehiculos)
 
+const abrirNuevoModal = () => {
+  editMode.value = false
+  selectedId.value = null
+  form.value = { placa: '', tipo: 'Auto', marca: '', modelo: '', año: '', color: '' }
+  showModal.value = true
+}
+
+const abrirEditarModal = (v) => {
+  editMode.value = true
+  selectedId.value = v.id
+  form.value = {
+    placa: v.placa,
+    tipo: v.tipo || 'Auto',
+    marca: v.marca || '',
+    modelo: v.modelo || '',
+    año: v.año || '',
+    color: v.color || ''
+  }
+  showModal.value = true
+}
+
 const guardar = async () => {
   try {
-    const res = await api.post('/Vehiculo', form.value)
+    let res
+    if (editMode.value) {
+      res = await api.put(`/Vehiculo/${selectedId.value}`, form.value)
+    } else {
+      res = await api.post('/Vehiculo', form.value)
+    }
+
     if (res.data.success) {
-      Swal.fire({ icon: 'success', title: 'Registrado', text: res.data.message, timer: 1500, showConfirmButton: false })
+      Swal.fire({
+        icon: 'success',
+        title: editMode.value ? 'Actualizado' : 'Registrado',
+        text: res.data.message,
+        timer: 1500,
+        showConfirmButton: false
+      })
       showModal.value = false
-      form.value = { placa: '', tipo: 'Auto', marca: '', modelo: '', año: '', color: '' }
       cargarVehiculos()
     }
   } catch (e) {
-    Swal.fire('Error', e.response?.data?.message || 'Error al guardar', 'error')
+    Swal.fire('Error', e.response?.data?.message || 'Error al guardar el vehículo', 'error')
   }
 }
 

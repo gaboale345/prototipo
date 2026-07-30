@@ -109,6 +109,52 @@ namespace BackendApi.Controllers
             return Ok(ApiResponse<VehiculoDto>.Ok(resDto, "Vehículo registrado correctamente"));
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ApiResponse<VehiculoDto>>> EditarVehiculo(int id, [FromBody] CrearVehiculoDto dto)
+        {
+            var vehiculo = await _context.Vehiculos.FindAsync(id);
+            if (vehiculo == null || !vehiculo.Activo) return NotFound(ApiResponse<VehiculoDto>.Fail("Vehículo no encontrado"));
+
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+            var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.UsuarioId == userId);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+
+            if (role != "Administrador" && (cliente == null || vehiculo.ClienteId != cliente.Id))
+                return Forbid();
+
+            if (await _context.Vehiculos.AnyAsync(v => v.Id != id && v.Placa.ToUpper() == dto.Placa.ToUpper() && v.Activo))
+            {
+                return BadRequest(ApiResponse<VehiculoDto>.Fail("Ya existe otro vehículo registrado con esta placa"));
+            }
+
+            var anterior = new { vehiculo.Placa, vehiculo.Tipo, vehiculo.Marca, vehiculo.Modelo, vehiculo.Año, vehiculo.Color };
+            vehiculo.Placa = dto.Placa.ToUpper();
+            vehiculo.Tipo = dto.Tipo;
+            vehiculo.Marca = dto.Marca;
+            vehiculo.Modelo = dto.Modelo;
+            vehiculo.Año = dto.Año;
+            vehiculo.Color = dto.Color;
+
+            await _context.SaveChangesAsync();
+            await _auditoria.RegistrarAsync("EditarVehiculo", "Vehiculos", "Vehiculo", id, anterior, dto, userId);
+
+            var resDto = new VehiculoDto
+            {
+                Id = vehiculo.Id,
+                ClienteId = vehiculo.ClienteId,
+                NombreCliente = $"{User.FindFirstValue(ClaimTypes.Name)}",
+                Placa = vehiculo.Placa,
+                Tipo = vehiculo.Tipo,
+                Marca = vehiculo.Marca,
+                Modelo = vehiculo.Modelo,
+                Año = vehiculo.Año,
+                Color = vehiculo.Color,
+                Activo = vehiculo.Activo
+            };
+
+            return Ok(ApiResponse<VehiculoDto>.Ok(resDto, "Vehículo actualizado correctamente"));
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse<string>>> EliminarVehiculo(int id)
         {

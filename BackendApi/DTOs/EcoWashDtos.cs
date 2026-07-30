@@ -299,6 +299,12 @@ namespace BackendApi.DTOs
         public string? Observaciones { get; set; }
     }
 
+    public class EditarReservaDto
+    {
+        [Required] public DateTime FechaProgramada { get; set; }
+        public string? Observaciones { get; set; }
+    }
+
     // ── Producto DTOs ──────────────────────────────────────────────────────────
 
     public class ProductoDto
