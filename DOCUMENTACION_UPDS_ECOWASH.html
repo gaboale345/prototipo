@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Documentación Proyecto Final - EcoWash Móvil UPDS</title>
+<style>
+  @page {
+    size: letter;
+    margin: 2.2cm 2.2cm 2.2cm 2.2cm;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1e293b;
+    background: #ffffff;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #1e3a8a;
+    font-weight: 700;
+    line-height: 1.3;
+    page-break-after: avoid;
+  }
+
+  h1 {
+    font-size: 18pt;
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 6px;
+    margin-top: 28px;
+    margin-bottom: 14px;
+  }
+
+  h2 {
+    font-size: 14pt;
+    border-left: 4px solid #2563eb;
+    padding-left: 8px;
+    margin-top: 22px;
+    margin-bottom: 10px;
+  }
+
+  h3 {
+    font-size: 12pt;
+    margin-top: 16px;
+    margin-bottom: 8px;
+  }
+
+  p {
+    margin-bottom: 12px;
+    text-align: justify;
+  }
+
+  ul, ol {
+    margin-top: 6px;
+    margin-bottom: 12px;
+    padding-left: 24px;
+  }
+
+  li {
+    margin-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+    margin-bottom: 18px;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+  }
+
+  th, td {
+    border: 1px solid #cbd5e1;
+    padding: 7px 10px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #1e3a8a;
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f8fafc;
+  }
+
+  code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    background-color: #f1f5f9;
+    color: #0f172a;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 9.5pt;
+  }
+
+  pre {
+    background-color: #0f172a;
+    color: #f8fafc;
+    padding: 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 9pt;
+    line-height: 1.4;
+    page-break-inside: avoid;
+  }
+
+  pre code {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+  }
+
+  blockquote {
+    border-left: 4px solid #94a3b8;
+    background-color: #f8fafc;
+    margin: 12px 0;
+    padding: 8px 14px;
+    font-style: italic;
+  }
+
+  hr {
+    border: 0;
+    height: 1px;
+    background: #cbd5e1;
+    margin: 20px 0;
+  }
+</style>
+</head>
+<body>
+<h1>UNIVERSIDAD PRIVADA DOMINGO SAVIO</h1>
+<h2>CARRERA DE INGENIERÍA DE SISTEMAS</h2>
+<h3>PROGRAMACIÓN WEB II</h3>
+<h1>DOCUMENTACIÓN TÉCNICA DEL PROYECTO FINAL</h1>
+<h2>EcoWash Móvil — Plataforma de Gestión Comercial de Lavado de Autos a Domicilio</h2>
+<hr>
+<h3>DATOS GENERALES DEL PROYECTO</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Campo</th>
+<th align="left">Detalle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Nombre del proyecto</strong></td>
+<td align="left">EcoWash Móvil — Plataforma de Gestión Comercial de Lavado de Autos a Domicilio</td>
+</tr>
+<tr>
+<td align="left"><strong>Integrantes</strong></td>
+<td align="left">Estudiante(s) de Ingeniería de Sistemas</td>
+</tr>
+<tr>
+<td align="left"><strong>Docente</strong></td>
+<td align="left">Docente de Programación Web II</td>
+</tr>
+<tr>
+<td align="left"><strong>Turno</strong></td>
+<td align="left">Mañana</td>
+</tr>
+<tr>
+<td align="left"><strong>Tecnologías</strong></td>
+<td align="left">Vue.js 3 + ASP.NET Core 8 Web API + Entity Framework Core + SQL Server / SQLite / MySQL + Docker &amp; Docker Compose</td>
+</tr>
+<tr>
+<td align="left"><strong>Gestión</strong></td>
+<td align="left">I / 2026</td>
+</tr>
+<tr>
+<td align="left"><strong>Fecha</strong></td>
+<td align="left">Julio de 2026</td>
+</tr>
+<tr>
+<td align="left"><strong>Ciudad</strong></td>
+<td align="left">Santa Cruz de la Sierra – Bolivia (2026)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>ÍNDICE GENERAL</h2>
+<ol>
+<li><a href="#1-introducci%C3%B3n">INTRODUCCIÓN</a></li>
+<li><a href="#2-descripci%C3%B3n-del-problema">DESCRIPCIÓN DEL PROBLEMA</a></li>
+<li><a href="#3-justificaci%C3%B3n">JUSTIFICACIÓN</a></li>
+<li><a href="#4-objetivos">OBJETIVOS</a></li>
+<li><a href="#5-alcance-y-limitaciones">ALCANCE Y LIMITACIONES</a></li>
+<li><a href="#6-impacto-social-eje-transversal-y-ods">IMPACTO SOCIAL, EJE TRANSVERSAL Y ODS</a></li>
+<li><a href="#7-requerimientos-del-sistema">REQUERIMIENTOS DEL SISTEMA</a><ul>
+<li>7.1 <a href="#71-requerimientos-funcionales">Requerimientos funcionales</a></li>
+<li>7.2 <a href="#72-requerimientos-no-funcionales">Requerimientos no funcionales</a></li>
+</ul>
+</li>
+<li><a href="#8-diagrama-de-casos-de-uso">DIAGRAMA DE CASOS DE USO</a><ul>
+<li>8.1 <a href="#81-descripci%C3%B3n-de-actores">Descripción de actores</a></li>
+<li>8.2 <a href="#82-especificaci%C3%B3n-de-casos-de-uso">Especificación de casos de uso</a></li>
+</ul>
+</li>
+<li><a href="#9-diagrama-de-clases">DIAGRAMA DE CLASES</a><ul>
+<li>9.1 <a href="#91-descripci%C3%B3n-de-clases-principales">Descripción de clases principales</a></li>
+</ul>
+</li>
+<li><a href="#10-modelo-relacional-de-la-base-de-datos">MODELO RELACIONAL DE LA BASE DE DATOS</a></li>
+<li><a href="#11-diccionario-de-datos">DICCIONARIO DE DATOS</a></li>
+<li><a href="#12-arquitectura-del-sistema">ARQUITECTURA DEL SISTEMA</a><ul>
+<li>12.1 <a href="#121-arquitectura-l%C3%B3gica">Arquitectura lógica</a></li>
+<li>12.2 <a href="#122-arquitectura-de-contenedores">Arquitectura de contenedores</a></li>
+<li>12.3 <a href="#123-flujo-de-una-solicitud">Flujo de una solicitud</a></li>
+</ul>
+</li>
+<li><a href="#13-tecnolog%C3%ADas-utilizadas">TECNOLOGÍAS UTILIZADAS</a></li>
+<li><a href="#14-dise%C3%B1o-de-interfaces">DISEÑO DE INTERFACES</a></li>
+<li><a href="#15-implementaci%C3%B3n-del-frontend">IMPLEMENTACIÓN DEL FRONTEND</a><ul>
+<li>15.1 <a href="#151-estructura-del-frontend">Estructura del frontend</a></li>
+<li>15.2 <a href="#152-componentes-y-vistas">Componentes y vistas</a></li>
+<li>15.3 <a href="#153-consumo-de-la-api">Consumo de la API</a></li>
+</ul>
+</li>
+<li><a href="#16-implementaci%C3%B3n-del-backend">IMPLEMENTACIÓN DEL BACKEND</a><ul>
+<li>16.1 <a href="#161-estructura-del-backend">Estructura del backend</a></li>
+<li>16.2 <a href="#162-endpoints-de-la-api">Endpoints de la API</a></li>
+<li>16.3 <a href="#163-integraci%C3%B3n-con-entity-framework-core">Integración con Entity Framework Core</a></li>
+</ul>
+</li>
+<li><a href="#17-implementaci%C3%B3n-de-docker-obligatoria">IMPLEMENTACIÓN DE DOCKER (OBLIGATORIA)</a><ul>
+<li>17.1 <a href="#171-conceptos-aplicados">Conceptos aplicados</a></li>
+<li>17.2 <a href="#172-servicios-implementados">Servicios implementados</a></li>
+<li>17.3 <a href="#173-dockerfile-del-frontend">Dockerfile del frontend</a></li>
+<li>17.4 <a href="#174-dockerfile-del-backend">Dockerfile del backend</a></li>
+<li>17.5 <a href="#175-archivo-docker-compose">Archivo Docker Compose</a></li>
+<li>17.6 <a href="#176-variables-de-entorno-y-seguridad">Variables de entorno y seguridad</a></li>
+<li>17.7 <a href="#177-evidencias-de-ejecuci%C3%B3n">Evidencias de ejecución</a></li>
+</ul>
+</li>
+<li><a href="#18-pruebas-del-sistema">PRUEBAS DEL SISTEMA</a></li>
+<li><a href="#19-manual-de-instalaci%C3%B3n-y-ejecuci%C3%B3n-local">MANUAL DE INSTALACIÓN Y EJECUCIÓN LOCAL</a></li>
+<li><a href="#20-control-de-versiones-con-git-y-github">CONTROL DE VERSIONES CON GIT Y GITHUB</a></li>
+<li><a href="#21-investigaci%C3%B3n-imryd-alternativas-de-hosting-para-el-proyecto">INVESTIGACIÓN IMRyD: ALTERNATIVAS DE HOSTING PARA EL PROYECTO</a></li>
+<li><a href="#22-conclusiones-generales-del-proyecto">CONCLUSIONES GENERALES DEL PROYECTO</a></li>
+<li><a href="#23-recomendaciones-y-trabajo-futuro">RECOMENDACIONES Y TRABAJO FUTURO</a></li>
+<li><a href="#24-referencias-bibliogr%C3%A1ficas">REFERENCIAS BIBLIOGRÁFICAS</a></li>
+<li><a href="#25-anexos">ANEXOS</a></li>
+</ol>
+<hr>
+<h2>1. INTRODUCCIÓN</h2>
+<p>En la ciudad de Santa Cruz de la Sierra, el sector automotriz experimenta un crecimiento constante en el parque vehicular, lo que genera una demanda creciente de servicios de mantenimiento y limpieza estética de vehículos. Sin embargo, el ritmo de vida urbano impone restricciones de tiempo a los propietarios de vehículos, dificultando su traslado a centros de lavado tradicionales. Frente a este contexto, emergen los servicios de lavado de vehículos a domicilio (&quot;mobile car wash&quot;), una solución orientada a llevar el servicio directamente a los hogares u oficinas de los clientes.</p>
+<p>A pesar de su atractivo valor comercial, la mayoría de los pequeños y medianos emprendimientos de este sector operan mediante herramientas informales como registros manuales en cuadernos o mensajería instantánea. Esta informalidad operativa acarrea severos cuellos de botella: descoordinación en las agendas de los lavadores, falta de trazabilidad en las ventas, nulo control de insumos (shampoos, ceras, desengrasantes) y la ausencia de reportes financieros confiables.</p>
+<p>Para dar respuesta integral a este problema se presenta <strong>EcoWash Móvil</strong>, una plataforma web moderna, escalable y contenerizada de tres capas. El sistema automatiza el ciclo comercial completo: desde el registro y reserva inteligente por parte del cliente, pasando por la asignación y ejecución del servicio por los lavadores, hasta la emisión de ventas, cobro mediante pasarelas/QR, descuento automático de inventario, auditoría de operaciones y presentación de métricas en dashboards administrativos.</p>
+<p>La solución está construida adoptando estándares actuales del desarrollo software: un frontend desacoplado desarrollado en <strong>Vue 3 SPA</strong> (Vite, Pinia, Axios), un backend robusto basado en <strong>ASP.NET Core 8 Web API</strong> con <strong>Entity Framework Core 8</strong>, y una persistencia en base de datos en <strong>3FN (Tercera Forma Normal)</strong>. Todo el sistema se integra mediante <strong>Docker</strong> y <strong>Docker Compose</strong>, garantizando un despliegue aislado y portátil.</p>
+<hr>
+<h2>2. DESCRIPCIÓN DEL PROBLEMA</h2>
+<p>El modelo tradicional de gestión en las empresas emergentes de lavado de autos a domicilio en el medio local presenta las siguientes deficiencias críticas:</p>
+<ol>
+<li><strong>Desorganización en el agendamiento y duplicidad de reservas:</strong> Al recibir solicitudes por canales informales (WhatsApp, llamadas), no existe validación en tiempo real de la disponibilidad de personal ni horarios de traslado, ocasionando solapamientos o incumplimientos en la atención.</li>
+<li><strong>Falta de visibilidad de ubicaciones y vehículos:</strong> Los clientes deben reescribir repetidamente los datos de sus vehículos (placa, modelo, tipo) y sus direcciones, incrementando la tasa de error y ralentizando la atención.</li>
+<li><strong>Pérdida de control de insumos e inventario:</strong> Los insumos químicos y accesorios de limpieza sufren mermas no registradas. La empresa carece de un mecanismo automático que descuente el material gastado por cada servicio finalizado ni de alertas de stock mínimo.</li>
+<li><strong>Ausencia de auditoría y reportes financieros:</strong> La gerencia no dispone de estadísticas consolidadas sobre ingresos diarios/mensuales, servicios más demandados, efectividad del personal o historial de auditoría frente a modificaciones sensibles de precios o usuarios.</li>
+</ol>
+<p>Estas limitantes impiden el escalamiento del negocio, reducen la satisfacción del cliente y aumentan los costos operativos por ineficiencia.</p>
+<hr>
+<h2>3. JUSTIFICACIÓN</h2>
+<ul>
+<li><strong>Técnica:</strong> La adopción de una arquitectura web desacoplada en tres capas (Vue.js + ASP.NET Core REST API + Base de datos relacional) promueve la separación de responsabilidades, facilitando el mantenimiento, la reutilización de APIs y la escalabilidad horizontal. La contenerización mediante Docker asegura la consistencia de entornos desde desarrollo hasta producción.</li>
+<li><strong>Social:</strong> Ofrece a la comunidad una alternativa cómoda y profesional para el cuidado de sus vehículos, optimizando el uso del tiempo libre de los usuarios y dignificando la labor de los técnicos de limpieza mediante herramientas tecnológicas intuitivas.</li>
+<li><strong>Académica:</strong> Permite poner en práctica los conocimientos avanzados de la materia <strong>Programación Web II</strong>, demostrando el dominio de patrones de diseño de software (MVC, REST, ORM EF Core, SPA, JWT Auth, Docker Compose) e integración de arquitecturas distribuidas.</li>
+<li><strong>Económica y de Viabilidad:</strong> La utilización de un ecosistema tecnológico <em>Open Source</em> (.NET Core, Vue 3, MySQL/SQLite, Docker, Nginx) reduce a cero los costos por licencias de software, convirtiendo al sistema en una propuesta tecnológicamente viable para pequeñas empresas.</li>
+</ul>
+<hr>
+<h2>4. OBJETIVOS</h2>
+<h3>Objetivo General</h3>
+<p>Diseñar, desarrollar, integrar, documentar y contenerizar la plataforma web <strong>EcoWash Móvil</strong> para la gestión comercial de servicios de lavado de vehículos a domicilio en Santa Cruz de la Sierra, aplicando una arquitectura de tres capas con Vue 3, ASP.NET Core 8 Web API, Entity Framework Core y Docker Compose.</p>
+<h3>Objetivos Específicos</h3>
+<ol>
+<li>Identificar y especificar los requerimientos funcionales y no funcionales que rigen el flujo de reservas, clientes, empleados, inventario, pagos y auditoría.</li>
+<li>Modelar el sistema mediante diagramas de Casos de Uso, Clases y el Modelo Relacional de Base de Datos en Tercera Forma Normal (3FN) compuesto por 27 entidades.</li>
+<li>Desarrollar la Web API RESTful en C# ASP.NET Core 8 con Entity Framework Core, autenticación mediante JWT y más de 20 controladores REST.</li>
+<li>Construir la interfaz de usuario reactiva Single Page Application (SPA) con Vue 3, Pinia, Vue Router y Axios, asegurando una experiencia visual intuitiva y adaptativa.</li>
+<li>Contenerizar los servicios (Frontend Nginx, Backend Web API y Base de Datos) con Dockerfiles optimizados y orquestación con Docker Compose.</li>
+<li>Realizar un estudio en formato IMRyD para evaluar plataformas de hosting y despliegue en la nube.</li>
+</ol>
+<hr>
+<h2>5. ALCANCE Y LIMITACIONES</h2>
+<h3>Alcance</h3>
+<ul>
+<li><strong>Módulo de Usuarios y Roles:</strong> Autenticación JWT, gestión de perfiles (Administrador, Empleado, Cliente) y control de acceso basado en roles.</li>
+<li><strong>Módulo de Clientes y Vehículos:</strong> Registro de vehículos (placa, marca, modelo, tipo) y gestión de múltiples ubicaciones de domicilio.</li>
+<li><strong>Módulo de Reservas y Servicios:</strong> Selección de servicios de lavado, asignación de empleados, control de estados de la reserva (<em>Pendiente, Asignada, Aceptada, En Proceso, Finalizada, Cancelada</em>).</li>
+<li><strong>Módulo de Inventario y Productos:</strong> CRUD de categorías e insumos, registro de compras, control de stock actual/mínimo y descuento automático de insumos al finalizar servicios.</li>
+<li><strong>Módulo de Ventas, Pagos y Facturación:</strong> Emisión automática de ventas al completar servicios, registro de pagos (QR, Efectivo, Tarjeta) y generación de comprobante/factura.</li>
+<li><strong>Módulo de Auditoría y Reportes:</strong> Log automático de actividades críticas del sistema y dashboard con métricas estadísticas exportables.</li>
+</ul>
+<h3>Limitaciones</h3>
+<ul>
+<li>No incluye una aplicación móvil nativa (Android/iOS); la solución es una SPA Web accesible desde dispositivos móviles mediante navegador.</li>
+<li>La pasarela de pago QR simula la recepción y validación de comprobantes sin integración bancaria en tiempo real (API bancaria directa).</li>
+</ul>
+<hr>
+<h2>6. IMPACTO SOCIAL, EJE TRANSVERSAL Y ODS</h2>
+<ul>
+<li><strong>Eje Transversal UPDS:</strong> <em>Innovación tecnológica y transformación digital</em>. El proyecto introduce tecnologías web modernas y contenerización en un sector de servicios tradicionalmente informal en la región.</li>
+<li><strong>ODS vinculado:</strong> <strong>ODS 9 (Industria, Innovación e Infraestructura)</strong>. Fomenta el uso de infraestructuras digitales eficientes, promueve la formalización de microempresas de servicios e impulsa la adopción de herramientas informáticas limpias.</li>
+</ul>
+<hr>
+<h2>7. REQUERIMIENTOS DEL SISTEMA</h2>
+<h3>7.1 Requerimientos funcionales</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Código</th>
+<th align="left">Requerimiento funcional</th>
+<th align="left">Actor relacionado</th>
+<th align="left">Prioridad</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>RF-01</strong></td>
+<td align="left">El sistema debe permitir el inicio de sesión y registro de usuarios mediante credenciales válidas y generación de tokens JWT.</td>
+<td align="left">Todos los usuarios</td>
+<td align="left">Alta</td>
+</tr>
+<tr>
+<td align="left"><strong>RF-02</strong></td>
+<td align="left">El cliente debe poder registrar y administrar múltiples vehículos y direcciones de atención.</td>
+<td align="left">Cliente</td>
+<td align="left">Alta</td>
+</tr>
+<tr>
+<td align="left"><strong>RF-03</strong></td>
+<td align="left">El cliente debe poder solicitar una reserva seleccionando vehículo, servicio, ubicación y fecha/hora.</td>
+<td align="left">Cliente</td>
+<td align="left">Alta</td>
+</tr>
+<tr>
+<td align="left"><strong>RF-04</strong></td>
+<td align="left">El empleado debe visualizar sus reservas asignadas, aceptarlas, iniciar el servicio y marcar su finalización.</td>
+<td align="left">Empleado</td>
+<td align="left">Alta</td>
+</tr>
+<tr>
+<td align="left"><strong>RF-05</strong></td>
+<td align="left">Al marcar un servicio como finalizado, el sistema debe generar automáticamente la venta y descontar el stock de insumos asociado.</td>
+<td align="left">Sistema / Empleado</td>
+<td align="left">Alta</td>
+</tr>
+<tr>
+<td align="left"><strong>RF-06</strong></td>
+<td align="left">El administrador debe gestionar el catálogo de productos/insumos, definir stock mínimo y recibir alertas de reposición.</td>
+<td align="left">Administrador</td>
+<td align="left">Alta</td>
+</tr>
+<tr>
+<td align="left"><strong>RF-07</strong></td>
+<td align="left">El sistema debe permitir el registro de pagos (Efectivo, QR, Tarjeta) y la emisión del comprobante/factura.</td>
+<td align="left">Cliente / Admin</td>
+<td align="left">Media</td>
+</tr>
+<tr>
+<td align="left"><strong>RF-08</strong></td>
+<td align="left">El sistema debe guardar un historial de auditoría con la fecha, usuario, tabla y acción realizada para operaciones críticas.</td>
+<td align="left">Sistema</td>
+<td align="left">Media</td>
+</tr>
+<tr>
+<td align="left"><strong>RF-09</strong></td>
+<td align="left">El administrador debe acceder a reportes estadísticos de ventas, servicios más solicitados e ingresos por período.</td>
+<td align="left">Administrador</td>
+<td align="left">Media</td>
+</tr>
+<tr>
+<td align="left"><strong>RF-10</strong></td>
+<td align="left">El cliente debe poder calificar el servicio recibido de 1 a 5 estrellas al concluir la atención.</td>
+<td align="left">Cliente</td>
+<td align="left">Baja</td>
+</tr>
+</tbody></table>
+<h3>7.2 Requerimientos no funcionales</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Código</th>
+<th align="left">Requerimiento no funcional</th>
+<th align="left">Criterio de verificación</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>RNF-01</strong></td>
+<td align="left"><strong>Contenerización y Despliegue:</strong> El sistema completo debe desplegarse mediante Docker Compose con tres contenedores aislados.</td>
+<td align="left">Verificación exitosa mediante <code>docker compose up</code> e inspección de servicios en ejecución.</td>
+</tr>
+<tr>
+<td align="left"><strong>RNF-02</strong></td>
+<td align="left"><strong>Rendimiento:</strong> El tiempo de respuesta de las APIs REST no debe superar los 500 ms en condiciones normales de carga.</td>
+<td align="left">Pruebas de tiempo de respuesta mediante llamadas HTTP/Axios en red local.</td>
+</tr>
+<tr>
+<td align="left"><strong>RNF-03</strong></td>
+<td align="left"><strong>Seguridad:</strong> Las contraseñas deben cifrarse con el algoritmo BCrypt y las rutas protegidas deben exigir un encabezado <code>Authorization: Bearer &lt;token&gt;</code>.</td>
+<td align="left">Inspección de base de datos (hashes) y validación de middleware de autenticación.</td>
+</tr>
+<tr>
+<td align="left"><strong>RNF-04</strong></td>
+<td align="left"><strong>Persistencia:</strong> La base de datos relacional debe conservar los datos de forma persistente mediante volúmenes de Docker.</td>
+<td align="left">Reinicio de contenedores Docker y comprobación de integridad de datos almacenados.</td>
+</tr>
+<tr>
+<td align="left"><strong>RNF-05</strong></td>
+<td align="left"><strong>Usabilidad y Adaptabilidad:</strong> La interfaz gráfica de usuario debe ser responsiva y utilizar una paleta de colores coherente (<code>#2563EB</code>).</td>
+<td align="left">Verificación visual en pantallas de escritorio, tablets y dispositivos móviles.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>8. DIAGRAMA DE CASOS DE USO</h2>
+<p>El sistema organiza sus interacciones según tres actores principales que operan sobre la plataforma.</p>
+<h3>8.1 Descripción de actores</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Actor</th>
+<th align="left">Descripción</th>
+<th align="left">Responsabilidades principales</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Cliente</strong></td>
+<td align="left">Usuario final que solicita la atención de lavado a domicilio.</td>
+<td align="left">Registrar vehículos, ubicaciones, agendar reservas, realizar pagos y calificar atención.</td>
+</tr>
+<tr>
+<td align="left"><strong>Empleado</strong></td>
+<td align="left">Técnico encargado de ejecutar el lavado en la ubicación del cliente.</td>
+<td align="left">Consultar agenda de reservas asignadas, aceptar/iniciar/finalizar servicios.</td>
+</tr>
+<tr>
+<td align="left"><strong>Administrador</strong></td>
+<td align="left">Usuario con privilegios elevados encargado de la gestión global.</td>
+<td align="left">Gestionar inventario, servicios, precios, personal, auditoría y reportes gerenciales.</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>8.2 Especificación de casos de uso</h3>
+<h4>CU-01: Iniciar Sesión</h4>
+<ul>
+<li><strong>Actor Principal:</strong> Cliente / Empleado / Administrador.</li>
+<li><strong>Precondiciones:</strong> El usuario debe estar registrado activamente.</li>
+<li><strong>Flujo Principal:</strong><ol>
+<li>El usuario accede al módulo de autenticación.</li>
+<li>Ingresa su correo electrónico y contraseña.</li>
+<li>El backend valida el hash BCrypt.</li>
+<li>El sistema emite un token JWT con vigencia de 7 días y redirige al dashboard según el rol.</li>
+</ol>
+</li>
+<li><strong>Postcondición:</strong> Sesión iniciada con token guardado en <code>localStorage</code>.</li>
+</ul>
+<h4>CU-02: Solicitar Reserva de Lavado</h4>
+<ul>
+<li><strong>Actor Principal:</strong> Cliente.</li>
+<li><strong>Precondiciones:</strong> Cliente autenticado con al menos un vehículo y una ubicación registrados.</li>
+<li><strong>Flujo Principal:</strong><ol>
+<li>El cliente entra a &quot;Nueva Reserva&quot;.</li>
+<li>Selecciona el vehículo y tipo de servicio (ej. <em>Lavado Premium</em>).</li>
+<li>Selecciona la dirección de atención y elige fecha/hora disponible.</li>
+<li>Confirma la solicitud. El sistema crea la reserva en estado &quot;Pendiente&quot;.</li>
+</ol>
+</li>
+<li><strong>Postcondición:</strong> Reserva registrada en estado Pendiente disponible para asignación.</li>
+</ul>
+<h4>CU-03: Gestionar Productos e Inventario</h4>
+<ul>
+<li><strong>Actor Principal:</strong> Administrador.</li>
+<li><strong>Precondiciones:</strong> Autenticación activa con rol Administrador.</li>
+<li><strong>Flujo Principal:</strong><ol>
+<li>Accede al panel de inventario.</li>
+<li>Consulta la lista de insumos con stock actual y stock mínimo.</li>
+<li>Registra o actualiza un producto (nombre, categoría, precio, unidades).</li>
+<li>El sistema valida los datos y actualiza la base de datos.</li>
+</ol>
+</li>
+<li><strong>Postcondición:</strong> Producto actualizado en el catálogo global.</li>
+</ul>
+<h4>CU-04: Aceptar/Finalizar Reserva</h4>
+<ul>
+<li><strong>Actor Principal:</strong> Empleado.</li>
+<li><strong>Precondiciones:</strong> Reserva asignada al empleado en estado &quot;Asignada&quot; o &quot;Aceptada&quot;.</li>
+<li><strong>Flujo Principal:</strong><ol>
+<li>El empleado visualiza la reserva en su panel.</li>
+<li>Al llegar a la ubicación marca el estado &quot;En Proceso&quot;.</li>
+<li>Al concluir la limpieza marca &quot;Finalizada&quot;.</li>
+<li>El sistema automáticamente registra la Venta y descuenta insumos del inventario.</li>
+</ol>
+</li>
+<li><strong>Postcondición:</strong> Servicio completado, venta registrada y stock actualizado.</li>
+</ul>
+<h4>CU-05: Generar Reportes</h4>
+<ul>
+<li><strong>Actor Principal:</strong> Administrador.</li>
+<li><strong>Precondiciones:</strong> Rol Administrador autenticado.</li>
+<li><strong>Flujo Principal:</strong><ol>
+<li>Selecciona la vista de Reportes Estadísticos.</li>
+<li>Define rango de fechas o filtro por tipo de servicio.</li>
+<li>El sistema calcula totales y presenta gráficos e indicadores.</li>
+</ol>
+</li>
+<li><strong>Postcondición:</strong> Reporte generado visualmente.</li>
+</ul>
+<h4>CU-06: Registrar Pago</h4>
+<ul>
+<li><strong>Actor Principal:</strong> Cliente.</li>
+<li><strong>Precondiciones:</strong> Reserva aceptada o finalizada.</li>
+<li><strong>Flujo Principal:</strong><ol>
+<li>Selecciona la reserva pendiente de pago.</li>
+<li>Elige el método de pago (QR / Efectivo / Tarjeta).</li>
+<li>Adjunta o confirma la transacción.</li>
+<li>El sistema genera el comprobante o factura correspondiente.</li>
+</ol>
+</li>
+<li><strong>Postcondición:</strong> Pago registrado y factura asociada en la base de datos.</li>
+</ul>
+<hr>
+<h2>9. DIAGRAMA DE CLASES</h2>
+<h3>9.1 Descripción de clases principales</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Clase</th>
+<th align="left">Responsabilidad</th>
+<th align="left">Atributos principales</th>
+<th align="left">Métodos principales</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Usuario</code></td>
+<td align="left">Autenticación y credenciales de acceso.</td>
+<td align="left"><code>Id</code>, <code>Email</code>, <code>PasswordHash</code>, <code>RolId</code>, <code>Estado</code></td>
+<td align="left"><code>ValidarPassword()</code>, <code>GenerarJWT()</code></td>
+</tr>
+<tr>
+<td align="left"><code>Cliente</code></td>
+<td align="left">Datos específicos del cliente.</td>
+<td align="left"><code>Id</code>, <code>UsuarioId</code>, <code>Ci</code>, <code>Direccion</code>, <code>Ciudad</code></td>
+<td align="left"><code>ObtenerVehiculos()</code>, <code>ObtenerReservas()</code></td>
+</tr>
+<tr>
+<td align="left"><code>Empleado</code></td>
+<td align="left">Información del lavador/operativo.</td>
+<td align="left"><code>Id</code>, <code>UsuarioId</code>, <code>Cargo</code>, <code>Especialidad</code>, <code>Disponible</code></td>
+<td align="left"><code>AsignarReserva()</code>, <code>CambiarEstado()</code></td>
+</tr>
+<tr>
+<td align="left"><code>Vehiculo</code></td>
+<td align="left">Identificación de los autos a lavar.</td>
+<td align="left"><code>Id</code>, <code>ClienteId</code>, <code>Placa</code>, <code>Marca</code>, <code>Modelo</code>, <code>Tipo</code></td>
+<td align="left"><code>ObtenerHistorialServicios()</code></td>
+</tr>
+<tr>
+<td align="left"><code>Reserva</code></td>
+<td align="left">Solicitud y agenda del servicio.</td>
+<td align="left"><code>Id</code>, <code>ClienteId</code>, <code>EmpleadoId</code>, <code>ServicioId</code>, <code>FechaHora</code>, <code>Estado</code></td>
+<td align="left"><code>ActualizarEstado()</code>, <code>CalcularMonto()</code></td>
+</tr>
+<tr>
+<td align="left"><code>Producto</code></td>
+<td align="left">Insumos de limpieza e inventario.</td>
+<td align="left"><code>Id</code>, <code>CategoriaId</code>, <code>Nombre</code>, <code>PrecioUnitario</code>, <code>StockActual</code>, <code>StockMinimo</code></td>
+<td align="left"><code>DescontarStock()</code>, <code>VerificarAlerta()</code></td>
+</tr>
+<tr>
+<td align="left"><code>Venta</code></td>
+<td align="left">Transacción comercial resultante.</td>
+<td align="left"><code>Id</code>, <code>ReservaId</code>, <code>Fecha</code>, <code>MontoTotal</code></td>
+<td align="left"><code>GenerarFactura()</code>, <code>ProcesarPago()</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>10. MODELO RELACIONAL DE LA BASE DE DATOS</h2>
+<p>La base de datos relacional de <strong>EcoWash Móvil</strong> se diseñó estrictamente en <strong>Tercera Forma Normal (3FN)</strong> para garantizar la integridad de datos, eliminar redundancias y permitir relaciones complejas entre usuarios, reservas, inventario y facturación. El modelo contiene 27 tablas relacionales:</p>
+<p><code>Emprendimiento</code> · <code>Rol</code> · <code>Permiso</code> · <code>RolPermiso</code> · <code>Usuario</code> · <code>Cliente</code> · <code>Empleado</code> · <code>Categoria</code> · <code>Producto</code> · <code>Proveedor</code> · <code>Compra</code> · <code>DetalleCompra</code> · <code>Inventario</code> · <code>MovimientoInventario</code> · <code>Vehiculo</code> · <code>Ubicacion</code> · <code>Servicio</code> · <code>Reserva</code> · <code>Venta</code> · <code>DetalleVenta</code> · <code>MetodoPago</code> · <code>Pago</code> · <code>Factura</code> · <code>Calificacion</code> · <code>Notificacion</code> · <code>Auditoria</code> · <code>Reporte</code></p>
+<hr>
+<h2>11. DICCIONARIO DE DATOS</h2>
+<p>A continuación se documentan las entidades clave del modelo de datos:</p>
+<h3>11.1 Tabla: <code>Usuario</code></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Campo</th>
+<th align="left">Tipo de dato</th>
+<th align="left">Longitud</th>
+<th align="left">PK/FK</th>
+<th align="left">Nulo</th>
+<th align="left">Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Id</code></td>
+<td align="left"><code>INT</code></td>
+<td align="left">—</td>
+<td align="left">PK</td>
+<td align="left">No</td>
+<td align="left">Identificador único del usuario</td>
+</tr>
+<tr>
+<td align="left"><code>Email</code></td>
+<td align="left"><code>VARCHAR</code></td>
+<td align="left"><code>100</code></td>
+<td align="left">—</td>
+<td align="left">No</td>
+<td align="left">Correo electrónico / usuario de acceso</td>
+</tr>
+<tr>
+<td align="left"><code>PasswordHash</code></td>
+<td align="left"><code>VARCHAR</code></td>
+<td align="left"><code>255</code></td>
+<td align="left">—</td>
+<td align="left">No</td>
+<td align="left">Hash cifrado de la contraseña (BCrypt)</td>
+</tr>
+<tr>
+<td align="left"><code>RolId</code></td>
+<td align="left"><code>INT</code></td>
+<td align="left">—</td>
+<td align="left">FK</td>
+<td align="left">No</td>
+<td align="left">Referencia al rol asignado</td>
+</tr>
+<tr>
+<td align="left"><code>FechaCreacion</code></td>
+<td align="left"><code>DATETIME</code></td>
+<td align="left">—</td>
+<td align="left">—</td>
+<td align="left">No</td>
+<td align="left">Fecha de registro en el sistema</td>
+</tr>
+</tbody></table>
+<h3>11.2 Tabla: <code>Cliente</code></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Campo</th>
+<th align="left">Tipo de dato</th>
+<th align="left">Longitud</th>
+<th align="left">PK/FK</th>
+<th align="left">Nulo</th>
+<th align="left">Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Id</code></td>
+<td align="left"><code>INT</code></td>
+<td align="left">—</td>
+<td align="left">PK</td>
+<td align="left">No</td>
+<td align="left">Identificador único del cliente</td>
+</tr>
+<tr>
+<td align="left"><code>UsuarioId</code></td>
+<td align="left"><code>INT</code></td>
+<td align="left">—</td>
+<td align="left">FK</td>
+<td align="left">No</td>
+<td align="left">Relación 1:1 con la tabla Usuario</td>
+</tr>
+<tr>
+<td align="left"><code>Ci</code></td>
+<td align="left"><code>VARCHAR</code></td>
+<td align="left"><code>20</code></td>
+<td align="left">—</td>
+<td align="left">No</td>
+<td align="left">Carnet de identidad</td>
+</tr>
+<tr>
+<td align="left"><code>Direccion</code></td>
+<td align="left"><code>VARCHAR</code></td>
+<td align="left"><code>200</code></td>
+<td align="left">—</td>
+<td align="left">No</td>
+<td align="left">Dirección principal del domicilio</td>
+</tr>
+<tr>
+<td align="left"><code>Ciudad</code></td>
+<td align="left"><code>VARCHAR</code></td>
+<td align="left"><code>50</code></td>
+<td align="left">—</td>
+<td align="left">No</td>
+<td align="left">Ciudad de residencia</td>
+</tr>
+</tbody></table>
+<h3>11.3 Tabla: <code>Reserva</code></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Campo</th>
+<th align="left">Tipo de dato</th>
+<th align="left">Longitud</th>
+<th align="left">PK/FK</th>
+<th align="left">Nulo</th>
+<th align="left">Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Id</code></td>
+<td align="left"><code>INT</code></td>
+<td align="left">—</td>
+<td align="left">PK</td>
+<td align="left">No</td>
+<td align="left">Identificador único de la reserva</td>
+</tr>
+<tr>
+<td align="left"><code>ClienteId</code></td>
+<td align="left"><code>INT</code></td>
+<td align="left">—</td>
+<td align="left">FK</td>
+<td align="left">No</td>
+<td align="left">Cliente que solicita el servicio</td>
+</tr>
+<tr>
+<td align="left"><code>EmpleadoId</code></td>
+<td align="left"><code>INT</code></td>
+<td align="left">—</td>
+<td align="left">FK</td>
+<td align="left">Sí</td>
+<td align="left">Empleado asignado para el lavado</td>
+</tr>
+<tr>
+<td align="left"><code>ServicioId</code></td>
+<td align="left"><code>INT</code></td>
+<td align="left">—</td>
+<td align="left">FK</td>
+<td align="left">No</td>
+<td align="left">Tipo de servicio seleccionado</td>
+</tr>
+<tr>
+<td align="left"><code>FechaHora</code></td>
+<td align="left"><code>DATETIME</code></td>
+<td align="left">—</td>
+<td align="left">—</td>
+<td align="left">No</td>
+<td align="left">Fecha y hora programada</td>
+</tr>
+<tr>
+<td align="left"><code>Estado</code></td>
+<td align="left"><code>VARCHAR</code></td>
+<td align="left"><code>30</code></td>
+<td align="left">—</td>
+<td align="left">No</td>
+<td align="left">Estado (<em>Pendiente, Asignada, Aceptada, En Proceso, Finalizada, Cancelada</em>)</td>
+</tr>
+</tbody></table>
+<h3>11.4 Tabla: <code>Producto</code></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Campo</th>
+<th align="left">Tipo de dato</th>
+<th align="left">Longitud</th>
+<th align="left">PK/FK</th>
+<th align="left">Nulo</th>
+<th align="left">Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Id</code></td>
+<td align="left"><code>INT</code></td>
+<td align="left">—</td>
+<td align="left">PK</td>
+<td align="left">No</td>
+<td align="left">Identificador del producto/insumo</td>
+</tr>
+<tr>
+<td align="left"><code>CategoriaId</code></td>
+<td align="left"><code>INT</code></td>
+<td align="left">—</td>
+<td align="left">FK</td>
+<td align="left">No</td>
+<td align="left">Categoría a la que pertenece</td>
+</tr>
+<tr>
+<td align="left"><code>Nombre</code></td>
+<td align="left"><code>VARCHAR</code></td>
+<td align="left"><code>100</code></td>
+<td align="left">—</td>
+<td align="left">No</td>
+<td align="left">Nombre del insumo</td>
+</tr>
+<tr>
+<td align="left"><code>PrecioUnitario</code></td>
+<td align="left"><code>DECIMAL</code></td>
+<td align="left"><code>10,2</code></td>
+<td align="left">—</td>
+<td align="left">No</td>
+<td align="left">Precio o costo del producto</td>
+</tr>
+<tr>
+<td align="left"><code>StockActual</code></td>
+<td align="left"><code>INT</code></td>
+<td align="left">—</td>
+<td align="left">—</td>
+<td align="left">No</td>
+<td align="left">Existencia física disponible</td>
+</tr>
+<tr>
+<td align="left"><code>StockMinimo</code></td>
+<td align="left"><code>INT</code></td>
+<td align="left">—</td>
+<td align="left">—</td>
+<td align="left">No</td>
+<td align="left">Umbral mínimo para alertas de stock</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>12. ARQUITECTURA DEL SISTEMA</h2>
+<h3>12.1 Arquitectura lógica</h3>
+<p>El sistema adopta una arquitectura de <strong>3 capas (Capa de Presentación, Capa de Negocio/API y Capa de Persistencia)</strong>:</p>
+<pre><code>[ Capa de Presentación ]     &lt;---&gt; HTTP / JSON (Axios) &lt;---&gt; [ Capa de Negocio / API ]     &lt;---&gt; EF Core ORM &lt;---&gt; [ Capa de Persistencia ]
+Vue.js 3 SPA (Vite, Pinia)                                 ASP.NET Core 8 Web API                                  SQL Server / SQLite / MySQL
+</code></pre>
+<h3>12.2 Arquitectura de contenedores</h3>
+<p>Mediante Docker Compose se orquestan tres servicios independientes conectados mediante una red virtual aislada (<code>ecowash-network</code>):</p>
+<pre><code>Usuario ---&gt; Nginx (Puerto 80 / Contenedor Frontend)
+                |
+                v  Proxy /api/
+             ASP.NET Core 8 Web API (Puerto 5275 / Contenedor Backend)
+                |
+                v  TCP / 3306
+             MySQL / SQL Server (Puerto 3306 / Contenedor Database + Volume)
+</code></pre>
+<h3>12.3 Flujo de una solicitud</h3>
+<ol>
+<li>El usuario interactúa con la SPA en Vue 3 y ejecuta una acción (ej. <em>Confirmar Reserva</em>).</li>
+<li>El cliente HTTP Axios envía una solicitud <code>POST /api/reserva</code> incluyendo el token JWT en la cabecera <code>Authorization</code>.</li>
+<li>Nginx / Kestrel recibe la petición; el Middleware de Autenticación valida la firma del token JWT.</li>
+<li>El controlador <code>ReservaController</code> procesa el DTO y llama a la capa de servicios para aplicar reglas de negocio.</li>
+<li>Entity Framework Core ejecuta la consulta LINQ y persiste los cambios en la base de datos relacional.</li>
+<li>La API devuelve una respuesta HTTP <code>200 OK</code> con un payload JSON estandarizado que actualiza la UI de Vue de manera reactiva.</li>
+</ol>
+<hr>
+<h2>13. TECNOLOGÍAS UTILIZADAS</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Tecnología</th>
+<th align="left">Versión utilizada</th>
+<th align="left">Función en el proyecto</th>
+<th align="left">Justificación técnica</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Vue.js</strong></td>
+<td align="left">3.x (Composition API)</td>
+<td align="left">Frontend SPA</td>
+<td align="left">Permite crear una interfaz altamente reactiva, modular y ligera con renderizado ágil en el navegador.</td>
+</tr>
+<tr>
+<td align="left"><strong>Axios</strong></td>
+<td align="left">1.x</td>
+<td align="left">Consumo de la API REST</td>
+<td align="left">Manejo limpio de promesas, interceptores para tokens JWT y transformación automática de JSON.</td>
+</tr>
+<tr>
+<td align="left"><strong>ASP.NET Core</strong></td>
+<td align="left">8.0</td>
+<td align="left">Backend Web API</td>
+<td align="left">Framework multiplataforma de alto rendimiento para APIs REST seguras y fuertemente tipadas en C#.</td>
+</tr>
+<tr>
+<td align="left"><strong>EF Core</strong></td>
+<td align="left">8.0</td>
+<td align="left">ORM / Acceso a datos</td>
+<td align="left">Facilita el mapeo objeto-relacional, consultas LINQ seguras contra inyecciones SQL y migraciones controladas.</td>
+</tr>
+<tr>
+<td align="left"><strong>SQL Server / MySQL</strong></td>
+<td align="left">8.0 / SQLite</td>
+<td align="left">Base de datos relacional</td>
+<td align="left">Motor relacional robusto que garantiza propiedades ACID e integridad referencial en 3FN.</td>
+</tr>
+<tr>
+<td align="left"><strong>Docker</strong></td>
+<td align="left">24+</td>
+<td align="left">Contenerización</td>
+<td align="left">Garantiza un entorno de ejecución idéntico, aislado y portátil sin depender del sistema operativo anfitrión.</td>
+</tr>
+<tr>
+<td align="left"><strong>Git / GitHub</strong></td>
+<td align="left">Latest</td>
+<td align="left">Control de versiones</td>
+<td align="left">Gestión colaborativa del código fuente con trazabilidad de cambios por ramas y commits.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>14. DISEÑO DE INTERFACES</h2>
+<p>El diseño UI/UX del sistema fue creado bajo la paleta corporativa <code>#2563EB</code> (Azul primario), aplicando principios de responsive design, micro-animaciones y efectos de glassmorphism:</p>
+<ol>
+<li><strong>Pantalla de Login (<code>/login</code>):</strong> Formulario minimalista para credenciales con validación visual inmediata y mensaje de error reactivo.</li>
+<li><strong>Dashboard Administrador (<code>/dashboard</code>):</strong> Panel gerencial con tarjetas de indicadores clave (Total Clientes, Ingresos del Mes, Reservas Activas, Empleados) y gráficos interactivos.</li>
+<li><strong>Solicitud de Reserva (<code>/reservar</code>):</strong> Asistente paso a paso para la selección de vehículo, catálogo de servicios con cálculo de costo en tiempo real, selección de dirección y calendario de horarios.</li>
+<li><strong>Gestión de Inventario (<code>/productos</code>):</strong> Tabla interactiva con resaltado automático en rojo para productos con stock igual o inferior al stock mínimo y modales de edición.</li>
+</ol>
+<hr>
+<h2>15. IMPLEMENTACIÓN DEL FRONTEND</h2>
+<h3>15.1 Estructura del frontend</h3>
+<pre><code class="language-text">Frontend/
+├── public/
+├── src/
+│   ├── assets/           # Estilos CSS globales y temas
+│   ├── components/       # Componentes reusables (Navbar.vue, Sidebar.vue)
+│   ├── router/           # Configuración de Vue Router y guardias de navegación
+│   ├── services/         # Cliente Axios e integraciones API (api.js)
+│   ├── stores/           # Gestión de estado global con Pinia (authStore, themeStore)
+│   ├── views/            # Vistas principales (Login.vue, Dashboard.vue, Reservas.vue)
+│   ├── App.vue           # Componente raíz
+│   └── main.js           # Punto de entrada de la aplicación
+├── package.json
+└── vite.config.js
+</code></pre>
+<h3>15.2 Componentes y vistas</h3>
+<ul>
+<li><code>Navbar.vue</code>: Barra superior con perfil de usuario, selector de tema oscuro/claro y botón de cierre de sesión.</li>
+<li><code>Sidebar.vue</code>: Menú lateral dinámico que filtra las opciones disponibles según el rol (<code>Administrador</code>, <code>Empleado</code>, <code>Cliente</code>).</li>
+<li><code>ReservaView.vue</code>: Componente que gestiona el flujo de creación y filtrado por estados de reservas.</li>
+</ul>
+<h3>15.3 Consumo de la API</h3>
+<p>El consumo de las APIs backend se centraliza en <code>src/services/api.js</code> mediante un cliente Axios configurado con interceptores de solicitud:</p>
+<pre><code class="language-javascript">import axios from &#39;axios&#39;
+
+const api = axios.create({
+  baseURL: &#39;http://localhost:5275/api&#39;,
+  headers: { &#39;Content-Type&#39;: &#39;application/json&#39; }
+})
+
+api.interceptors.request.use((config) =&gt; {
+  const token = localStorage.getItem(&#39;ecowash_token&#39;)
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
+export default api
+</code></pre>
+<hr>
+<h2>16. IMPLEMENTACIÓN DEL BACKEND</h2>
+<h3>16.1 Estructura del backend</h3>
+<pre><code class="language-text">BackendApi/
+├── Controllers/       # Controladores API REST (AuthController, ReservaController, etc.)
+├── Data/              # DbContext de EF Core (ApplicationDbContext.cs)
+├── DTOs/              # Data Transfer Objects con DataAnnotations
+├── Models/            # Entidades del modelo de dominio (27 clases de modelo)
+├── Services/          # Lógica de negocio, servicio de JWT y BCrypt
+├── Program.cs         # Configuración de servicios, CORS, JWT y Middleware
+└── appsettings.json   # Cadenas de conexión y secretos
+</code></pre>
+<h3>16.2 Endpoints de la API</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Método</th>
+<th align="left">Ruta</th>
+<th align="left">Descripción</th>
+<th align="left">Entrada</th>
+<th align="left">Respuesta</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>POST</strong></td>
+<td align="left"><code>/api/auth/login</code></td>
+<td align="left">Autentica un usuario y entrega Token JWT.</td>
+<td align="left">JSON (<code>email</code>, <code>password</code>)</td>
+<td align="left"><code>200 OK</code> (Token + Datos usuario)</td>
+</tr>
+<tr>
+<td align="left"><strong>GET</strong></td>
+<td align="left"><code>/api/cliente</code></td>
+<td align="left">Retorna el listado completo de clientes.</td>
+<td align="left">—</td>
+<td align="left"><code>200 OK</code> (Lista de clientes)</td>
+</tr>
+<tr>
+<td align="left"><strong>POST</strong></td>
+<td align="left"><code>/api/reserva</code></td>
+<td align="left">Registra una nueva reserva de lavado.</td>
+<td align="left">JSON (Datos reserva)</td>
+<td align="left"><code>201 Created</code></td>
+</tr>
+<tr>
+<td align="left"><strong>PUT</strong></td>
+<td align="left"><code>/api/reserva/{id}/estado</code></td>
+<td align="left">Actualiza el estado de la reserva.</td>
+<td align="left">JSON (<code>nuevoEstado</code>)</td>
+<td align="left"><code>200 OK</code></td>
+</tr>
+<tr>
+<td align="left"><strong>GET</strong></td>
+<td align="left"><code>/api/producto</code></td>
+<td align="left">Listado de productos e inventario.</td>
+<td align="left">—</td>
+<td align="left"><code>200 OK</code> (Lista de productos)</td>
+</tr>
+<tr>
+<td align="left"><strong>DELETE</strong></td>
+<td align="left"><code>/api/producto/{id}</code></td>
+<td align="left">Desactiva un producto del catálogo.</td>
+<td align="left">URL Parameter <code>id</code></td>
+<td align="left"><code>204 No Content</code></td>
+</tr>
+</tbody></table>
+<h3>16.3 Integración con Entity Framework Core</h3>
+<p>El acceso a la base de datos se administra mediante <code>ApplicationDbContext</code>, haciendo uso de Fluent API para configurar relaciones foráneas y restricciones de integridad:</p>
+<pre><code class="language-csharp">public class ApplicationDbContext : DbContext
+{
+    public ApplicationDbContext(DbContextOptions&lt;ApplicationDbContext&gt; options) : base(options) { }
+
+    public DbSet&lt;Usuario&gt; Usuarios { get; set; }
+    public DbSet&lt;Cliente&gt; Clientes { get; set; }
+    public DbSet&lt;Reserva&gt; Reservas { get; set; }
+    public DbSet&lt;Producto&gt; Productos { get; set; }
+    public DbSet&lt;Venta&gt; Ventas { get; set; }
+    // Configuración Fluent API y DbSets adicionales...
+}
+</code></pre>
+<hr>
+<h2>17. IMPLEMENTACIÓN DE DOCKER (OBLIGATORIA)</h2>
+<h3>17.1 Conceptos aplicados</h3>
+<p>Se implementó contenerización completa usando <strong>Docker</strong> y <strong>Docker Compose</strong> para eliminar discrepancias de entorno. Se aplican construcciones multi-etapa (<em>multi-stage builds</em>) para reducir el tamaño final de las imágenes y optimizar la seguridad.</p>
+<h3>17.2 Servicios implementados</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Servicio</th>
+<th align="left">Imagen o Dockerfile</th>
+<th align="left">Puerto</th>
+<th align="left">Responsabilidad</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>frontend</code></td>
+<td align="left">Dockerfile (Multi-stage Node -&gt; Nginx)</td>
+<td align="left"><code>80:80</code></td>
+<td align="left">Servir la SPA compilada en Vue 3 mediante Nginx.</td>
+</tr>
+<tr>
+<td align="left"><code>backend</code></td>
+<td align="left">Dockerfile (Multi-stage .NET SDK -&gt; Runtime)</td>
+<td align="left"><code>5275:80</code></td>
+<td align="left">Ejecutar la REST API en C# ASP.NET Core 8.</td>
+</tr>
+<tr>
+<td align="left"><code>db</code> / <code>sqlserver</code></td>
+<td align="left">Imagen Oficial <code>mysql:8.0</code> / SQL Server</td>
+<td align="left"><code>3306:3306</code></td>
+<td align="left">Persistencia relacional de datos con volumen.</td>
+</tr>
+</tbody></table>
+<h3>17.3 Dockerfile del frontend</h3>
+<pre><code class="language-dockerfile"># Etapa 1: Compilación
+FROM node:18-alpine AS build-stage
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Etapa 2: Servidor Web Nginx
+FROM nginx:stable-alpine AS production-stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD [&quot;nginx&quot;, &quot;-g&quot;, &quot;daemon off;&quot;]
+</code></pre>
+<h3>17.4 Dockerfile del backend</h3>
+<pre><code class="language-dockerfile"># Etapa 1: Compilación y Publish
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY [&quot;BackendApi.csproj&quot;, &quot;./&quot;]
+RUN dotnet restore &quot;BackendApi.csproj&quot;
+COPY . .
+RUN dotnet publish &quot;BackendApi.csproj&quot; -c Release -o /app/publish
+
+# Etapa 2: Runtime ligero
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+COPY --from=build /app/publish .
+EXPOSE 80
+ENTRYPOINT [&quot;dotnet&quot;, &quot;BackendApi.dll&quot;]
+</code></pre>
+<h3>17.5 Archivo Docker Compose</h3>
+<pre><code class="language-yaml">version: &#39;3.8&#39;
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: ecowash_db_container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ecowash_db
+    ports:
+      - &quot;3306:3306&quot;
+    volumes:
+      - db_data:/var/lib/mysql
+
+  backend:
+    build: ./BackendApi
+    container_name: ecowash_backend_container
+    ports:
+      - &quot;5275:80&quot;
+    depends_on:
+      - db
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Database=ecowash_db;Uid=root;Pwd=root;
+
+  frontend:
+    build: ./Frontend
+    container_name: ecowash_frontend_container
+    ports:
+      - &quot;80:80&quot;
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
+</code></pre>
+<h3>17.6 Variables de entorno y seguridad</h3>
+<p>Las credenciales sensibles y cadenas de conexión se administran fuera del código fuente en archivos de variables de entorno (<code>.env.example</code>), evitando la exposición de claves en repositorios públicos.</p>
+<h3>17.7 Evidencias de ejecución</h3>
+<ul>
+<li>Ejecución limpia de <code>docker compose up -d</code>.</li>
+<li>Levantamiento correcto de los 3 contenedores verificables con <code>docker compose ps</code>.</li>
+<li>Acceso simultáneo a Swagger UI (<code>http://localhost:5275/swagger</code>) y a la SPA (<code>http://localhost:80</code>).</li>
+</ul>
+<hr>
+<h2>18. PRUEBAS DEL SISTEMA</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Código</th>
+<th align="left">Función evaluada</th>
+<th align="left">Datos de entrada</th>
+<th align="left">Resultado esperado</th>
+<th align="left">Resultado obtenido</th>
+<th align="left">Estado</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>PR-01</strong></td>
+<td align="left">Inicio de Sesión</td>
+<td align="left">Email: <code>admin@ecowash.bo</code><br>Pass: <code>Admin@1234</code></td>
+<td align="left">Generación de JWT y acceso a Dashboard.</td>
+<td align="left">Token generado exitosamente y redirección correcta.</td>
+<td align="left"><strong>Aprobado</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>PR-02</strong></td>
+<td align="left">Solicitar Reserva</td>
+<td align="left">Vehículo ID: 1, Servicio ID: 2, Fecha: 2026-08-01</td>
+<td align="left">Reserva creada en estado &quot;Pendiente&quot;.</td>
+<td align="left">Objeto Reserva guardado en DB con id asignado.</td>
+<td align="left"><strong>Aprobado</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>PR-03</strong></td>
+<td align="left">Integración Vue-API</td>
+<td align="left">Solicitud <code>GET /api/producto</code></td>
+<td align="left">Renderizado reactivo de la tabla de inventario.</td>
+<td align="left">Datos recibidos y mostrados en pantalla sin recarga.</td>
+<td align="left"><strong>Aprobado</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>PR-04</strong></td>
+<td align="left">Persistencia Docker</td>
+<td align="left"><code>docker compose restart db</code></td>
+<td align="left">Mantener los datos almacenados tras el reinicio.</td>
+<td align="left">Los registros permanecieron intactos en el volumen <code>db_data</code>.</td>
+<td align="left"><strong>Aprobado</strong></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>19. MANUAL DE INSTALACIÓN Y EJECUCIÓN LOCAL</h2>
+<h3>Prerrequisitos</h3>
+<ul>
+<li>Docker Desktop 4.x instalado.</li>
+<li>Git instalado.</li>
+</ul>
+<h3>Pasos de ejecución con Docker Compose (Recomendado)</h3>
+<ol>
+<li><strong>Clonar el repositorio:</strong><pre><code class="language-bash">git clone https://github.com/usuario/ecowash-prototipo.git
+cd ecowash-prototipo
+</code></pre>
+</li>
+<li><strong>Iniciar los servicios contenerizados:</strong><pre><code class="language-bash">docker compose up -d --build
+</code></pre>
+</li>
+<li><strong>Verificar estado de contenedores:</strong><pre><code class="language-bash">docker compose ps
+</code></pre>
+</li>
+<li><strong>Acceder a la aplicación:</strong><ul>
+<li><strong>Frontend Web:</strong> <code>http://localhost:80</code></li>
+<li><strong>Backend REST API:</strong> <code>http://localhost:5275</code></li>
+<li><strong>Documentación Swagger:</strong> <code>http://localhost:5275/swagger</code></li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>20. CONTROL DE VERSIONES CON GIT Y GITHUB</h2>
+<p>El desarrollo del proyecto se registró utilizando <strong>Git</strong> y alojado en <strong>GitHub</strong>, aplicando buenas prácticas de control de versiones y mensajes de commit descriptivos:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Commit Hash</th>
+<th align="left">Responsabilidad / Descripción del Cambio</th>
+<th align="left">Evidencia</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>feat-01</code></td>
+<td align="left">Estructura base del proyecto backend ASP.NET Core y modelos EF Core</td>
+<td align="left">Repositorio GitHub</td>
+</tr>
+<tr>
+<td align="left"><code>feat-02</code></td>
+<td align="left">Implementación de AuthController y JWT Bearer Authentication</td>
+<td align="left">Repositorio GitHub</td>
+</tr>
+<tr>
+<td align="left"><code>feat-03</code></td>
+<td align="left">Desarrollo del SPA Frontend Vue 3 con Vite, Pinia y Router</td>
+<td align="left">Repositorio GitHub</td>
+</tr>
+<tr>
+<td align="left"><code>feat-04</code></td>
+<td align="left">Lógica de reservas, asignación de empleados e inventario</td>
+<td align="left">Repositorio GitHub</td>
+</tr>
+<tr>
+<td align="left"><code>feat-05</code></td>
+<td align="left">Contenerización con Dockerfile y Docker Compose de 3 capas</td>
+<td align="left">Repositorio GitHub</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>21. INVESTIGACIÓN IMRyD: ALTERNATIVAS DE HOSTING PARA EL PROYECTO</h2>
+<h3>21.1 Título de la investigación</h3>
+<p><strong>Análisis comparativo de plataformas PaaS e IaaS para el despliegue en producción de una aplicación web de tres capas contenerizada (Vue 3 + ASP.NET Core + Base de datos Relacional)</strong></p>
+<h3>21.2 Resumen</h3>
+<p>El despliegue eficiente de aplicaciones web modernas de tres capas exige evaluar criterios de costos, soporte de contenedores Docker, facilidad de integración continua (CI/CD) y persistencia de bases de datos relacionales. La presente investigación analiza comparativamente cuatro proveedores de hosting (AWS, Render, Railway y Koyeb) para determinar la mejor alternativa de publicación para la plataforma <strong>EcoWash Móvil</strong>. Mediante una metodología descriptiva-comparativa basada en métricas de rendimiento, compatibilidad con Docker Compose y planes académicos/gratuitos, se determinó que <strong>Railway</strong> y <strong>Render</strong> destacan como las mejores opciones para etapas de prototipado por su despliegue automatizado desde GitHub, mientras que <strong>AWS (EC2/ECS)</strong> se consolida como la alternativa más robusta para producción a gran escala.</p>
+<ul>
+<li><strong>Palabras clave:</strong> Hosting, Docker, ASP.NET Core, Vue 3, PaaS, Cloud Computing.</li>
+</ul>
+<h3>21.3 Introducción</h3>
+<p>Llevar un proyecto desde el entorno local de desarrollo hacia la nube implica superar barreras técnicas asociadas a la orquestación de servicios en red, la gestión de variables de entorno seguras y la persistencia de datos. Tradicionalmente, la contratación de servidores VPS exigía una compleja configuración manual del sistema operativo. Sin embargo, la irrupción de plataformas como Servicio (PaaS) preparadas para Docker ha simplificado este proceso. El objetivo de este trabajo es comparar cuantitativa y cualitativamente cuatro alternativas de hosting evaluando su viabilidad para aplicaciones web contenerizadas.</p>
+<h3>21.4 Metodología</h3>
+<p>Se realizó una revisión documental de las especificaciones técnicas oficiales de los proveedores AWS, Render, Railway y Koyeb a fecha de 2026. Se establecieron los siguientes 8 criterios de comparación:</p>
+<ol>
+<li>Compatibilidad nativa con Docker y Docker Compose.</li>
+<li>Soporte para Frontend Vue 3 (estático o Nginx).</li>
+<li>Soporte para Backend ASP.NET Core 8.</li>
+<li>Soporte para Base de datos relacional (MySQL / SQL Server).</li>
+<li>Costo y límites del plan gratuito / académico.</li>
+<li>Gestión de certificados SSL/HTTPS automáticos.</li>
+<li>Integración nativa CI/CD con GitHub.</li>
+<li>Complejidad de configuración.</li>
+</ol>
+<h3>21.5 Resultados</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Criterio de comparación</th>
+<th align="left">AWS (EC2 / App Runner)</th>
+<th align="left">Render</th>
+<th align="left">Railway</th>
+<th align="left">Koyeb</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Soporte Docker</strong></td>
+<td align="left">Nativo (ECS / EC2)</td>
+<td align="left">Nativo (Dockerfile)</td>
+<td align="left">Nativo (Dockerfile)</td>
+<td align="left">Nativo (Dockerfile)</td>
+</tr>
+<tr>
+<td align="left"><strong>Soporte Vue 3</strong></td>
+<td align="left">S3 + CloudFront / EC2</td>
+<td align="left">Static Site (Gratis)</td>
+<td align="left">Web Service</td>
+<td align="left">Web Service</td>
+</tr>
+<tr>
+<td align="left"><strong>Soporte .NET Core</strong></td>
+<td align="left">Full (.NET App Runner/EC2)</td>
+<td align="left">Web Service (Docker)</td>
+<td align="left">Web Service (Docker)</td>
+<td align="left">Web Service (Docker)</td>
+</tr>
+<tr>
+<td align="left"><strong>Base de Datos</strong></td>
+<td align="left">Amazon RDS / EC2 DB</td>
+<td align="left">Managed PostgreSQL/MySQL</td>
+<td align="left">Managed MySQL / PG</td>
+<td align="left">Managed Postgres</td>
+</tr>
+<tr>
+<td align="left"><strong>Costo Académico</strong></td>
+<td align="left">AWS Educate / Free Tier</td>
+<td align="left">Plan gratuito limitado</td>
+<td align="left">$5 USD crédito inicial</td>
+<td align="left">Plan gratuito básico</td>
+</tr>
+<tr>
+<td align="left"><strong>HTTPS Automático</strong></td>
+<td align="left">AWS Certificate Manager</td>
+<td align="left">Incluido automático</td>
+<td align="left">Incluido automático</td>
+<td align="left">Incluido automático</td>
+</tr>
+<tr>
+<td align="left"><strong>Integración GitHub</strong></td>
+<td align="left">AWS CodePipeline</td>
+<td align="left">Automática al hacer Push</td>
+<td align="left">Automática al hacer Push</td>
+<td align="left">Automática al hacer Push</td>
+</tr>
+<tr>
+<td align="left"><strong>Dificultad</strong></td>
+<td align="left">Alta</td>
+<td align="left">Baja</td>
+<td align="left">Muy Baja</td>
+<td align="left">Baja</td>
+</tr>
+</tbody></table>
+<h3>21.6 Discusión</h3>
+<ul>
+<li><strong>Render y Railway:</strong> Representan las plataformas más accesibles para equipos de desarrollo pequeños o proyectos universitarios. Su capacidad para detectar el <code>Dockerfile</code> en la raíz del repositorio de GitHub y compilar el contenedor automáticamente elimina la sobrecarga de administración de servidores.</li>
+<li><strong>AWS:</strong> Ofrece una infraestructura profesional inigualable en disponibilidad y escalabilidad global. No obstante, la curva de aprendizaje para configurar grupos de seguridad, VPCs y Amazon RDS resulta elevada para despliegues iniciales rápidos.</li>
+</ul>
+<h3>21.7 Conclusiones de la investigación</h3>
+<ol>
+<li>Para el prototipo funcional y la defensa del proyecto <strong>EcoWash Móvil</strong>, se recomienda <strong>Railway</strong> o <strong>Render</strong>, puesto que permiten conectar el repositorio de GitHub y levantar los contenedores en cuestión de minutos con HTTPS habilitado por defecto.</li>
+<li>Para una fase posterior de producción comercial con alto tráfico de clientes en Santa Cruz, la migración hacia <strong>AWS (EC2 / ECS + RDS)</strong> es la opción óptima para garantizar alta disponibilidad y cumplimiento de SLAs.</li>
+</ol>
+<hr>
+<h2>22. CONCLUSIONES GENERALES DEL PROYECTO</h2>
+<ol>
+<li>Se logró con éxito el diseño, desarrollo e integración de la plataforma <strong>EcoWash Móvil</strong>, cumpliendo satisfactoriamente con la totalidad de los requerimientos funcionales y no funcionales establecidos.</li>
+<li>La arquitectura de tres capas basada en <strong>Vue 3 SPA</strong> y <strong>ASP.NET Core 8 Web API</strong> demostró ser una solución técnica altamente sólida, garantizando la separación de preocupaciones y una respuesta ágil a las solicitudes del usuario.</li>
+<li>La implementación de la base de datos relacional en <strong>Tercera Forma Normal (3FN)</strong> aseguró la integridad y consistencia de la información operacional, permitiendo gestionar adecuadamente el flujo complejo entre usuarios, reservas, insumos e historial de auditoría.</li>
+<li>La contenerización con <strong>Docker Compose</strong> resolvió de manera definitiva el reto de portabilidad del software, haciendo posible iniciar la plataforma completa mediante un único comando en cualquier entorno.</li>
+</ol>
+<hr>
+<h2>23. RECOMENDACIONES Y TRABAJO FUTURO</h2>
+<ol>
+<li><strong>Integración de Pasarela de Pagos en Tiempo Real:</strong> Incorporar SDKs oficiales de pasarelas locales o internacionales (Stripe, Libélula, Pagosnet) para la confirmación automática e inmediata de transferencias bancarias y pagos QR.</li>
+<li><strong>Aplicación Web Progresiva (PWA):</strong> Convertir el frontend Vue 3 en una PWA para habilitar notificaciones Push en tiempo real sobre el cambio de estado de las reservas y soporte de trabajo offline.</li>
+<li><strong>Geolocalización en Tiempo Real:</strong> Integrar la API de Google Maps o Leaflet para que los clientes puedan rastrear la ruta del técnico de lavado en tiempo real mientras se desplaza hacia su domicilio.</li>
+</ol>
+<hr>
+<h2>24. REFERENCIAS BIBLIOGRÁFICAS</h2>
+<ul>
+<li>Docker Inc. (2026). <em>Docker Documentation: Containerize your applications</em>. Recuperado de <a href="https://docs.docker.com/">https://docs.docker.com/</a></li>
+<li>Microsoft Corporation. (2026). <em>ASP.NET Core Web API documentation and Entity Framework Core</em>. Microsoft Learn. Recuperado de <a href="https://learn.microsoft.com/es-es/aspnet/core/">https://learn.microsoft.com/es-es/aspnet/core/</a></li>
+<li>Vue.js Core Team. (2026). <em>Vue 3 - The Progressive JavaScript Framework</em>. Recuperado de <a href="https://vuejs.org/">https://vuejs.org/</a></li>
+<li>Railway Corp. (2026). <em>Deploying Docker Application on Railway</em>. Recuperado de <a href="https://docs.railway.app/">https://docs.railway.app/</a></li>
+</ul>
+<hr>
+<h2>25. ANEXOS</h2>
+<h3>Anexo A. Enlaces del proyecto</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Recurso</th>
+<th align="left">Enlace</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Repositorio GitHub</strong></td>
+<td align="left"><code>https://github.com/gaboale345/prototipo</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Documentación API Swagger</strong></td>
+<td align="left"><code>http://localhost:5275/swagger</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Documento PDF Técnico</strong></td>
+<td align="left"><code>DOCUMENTACION_UPDS_ECOWASH.pdf</code></td>
+</tr>
+</tbody></table>
+<h3>Anexo B. Credenciales de demostración</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Rol</th>
+<th align="left">Correo de usuario</th>
+<th align="left">Contraseña de prueba</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Administrador</strong></td>
+<td align="left"><code>admin@ecowash.bo</code></td>
+<td align="left"><code>Admin@1234</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Empleado</strong></td>
+<td align="left"><code>empleado@ecowash.bo</code></td>
+<td align="left"><code>Empleado@1234</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Cliente</strong></td>
+<td align="left"><code>cliente@ecowash.bo</code></td>
+<td align="left"><code>Cliente@1234</code></td>
+</tr>
+</tbody></table>
+<h3>Anexo C. Distribución de responsabilidades</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Integrante</th>
+<th align="left">Tareas desarrolladas</th>
+<th align="center">Porcentaje de participación</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Estudiante(s)</strong></td>
+<td align="left">Análisis de requerimientos, Backend API C#, Frontend Vue 3, Base de datos 3FN, Dockerfile, Investigación IMRyD y Documentación.</td>
+<td align="center">100%</td>
+</tr>
+</tbody></table>
+<hr>
+
+</body>
+</html>

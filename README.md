@@ -11,6 +11,67 @@
 
 ---
 
+## ⚙️ ¿Cómo Funciona el Sistema?
+
+EcoWash Móvil opera bajo un flujo de trabajo de **3 capas desacopladas** que se comunican mediante una API REST con autenticación JWT. A continuación se describe el ciclo completo de operación:
+
+### 🔄 Flujo Principal de Operación
+
+```
+1. El CLIENTE accede a http://localhost:5173 → se autentica con email/contraseña
+2. El sistema valida credenciales y emite un Token JWT (válido 7 días)
+3. El CLIENTE registra sus vehículos y ubicaciones de domicilio
+4. El CLIENTE solicita una reserva: elige vehículo, servicio, ubicación y horario
+5. El ADMINISTRADOR revisa y asigna la reserva a un EMPLEADO disponible
+6. El EMPLEADO recibe la reserva en su panel → la acepta → inicia el servicio → la finaliza
+7. Al finalizar, el sistema genera automáticamente:
+   ├── La VENTA con monto total
+   ├── La FACTURA
+   └── Descuenta los INSUMOS del inventario
+8. El CLIENTE paga mediante QR, efectivo o tarjeta
+9. El ADMINISTRADOR consulta REPORTES y AUDITORÍA del sistema
+```
+
+### 👤 Acceso por Rol
+
+| Rol | Acciones principales |
+|-----|----------------------|
+| **Cliente** | Registrar vehículos, solicitar reservas, realizar pagos, ver historial, calificar |
+| **Empleado** | Ver reservas asignadas, aceptar/rechazar, iniciar/finalizar servicios |
+| **Administrador** | CRUD completo, gestión de inventario, reportes, auditoría, asignación de empleados |
+
+### 🖥️ URLs de Acceso
+
+| Servicio | URL (Local) | URL (Docker) |
+|----------|-------------|--------------|
+| **Frontend Vue 3** | `http://localhost:5173` | `http://localhost:80` |
+| **Backend API** | `http://localhost:5275` | `http://localhost:5275` |
+| **Swagger (Docs API)** | `http://localhost:5275/swagger` | `http://localhost:5275/swagger` |
+| **Base de Datos** | SQLite (archivo local) | MySQL `:3306` |
+
+### 🔐 Seguridad y Autenticación
+
+- Todos los endpoints (excepto `/api/auth/login` y `/api/auth/register`) requieren un **Token JWT Bearer** en el header `Authorization`.
+- El token se genera al iniciar sesión y se almacena en `localStorage` del navegador.
+- El interceptor de Axios adjunta automáticamente el token en cada petición.
+- Las contraseñas se almacenan con hash **BCrypt** (no en texto plano).
+
+### 📦 Inicio Rápido
+
+```bash
+# Opción A — Con Docker (recomendado, un solo comando)
+docker compose up -d
+
+# Opción B — Manual
+# Terminal 1: Backend
+cd BackendApi && dotnet run
+
+# Terminal 2: Frontend
+cd Frontend && npm install --legacy-peer-deps && npm run dev
+```
+
+---
+
 ## 🏛️ Arquitectura del Sistema (MVC + REST API)
 
 El proyecto sigue una **Arquitectura Desacoplada de Capas** basada en el patrón MVC:
@@ -573,8 +634,8 @@ docker compose down
 
 ### 1. Clonar el repositorio
 ```bash
-git clone <url-del-repositorio>
-cd pro2.0
+git clone https://github.com/gaboale345/prototipo.git
+cd prototipo
 ```
 
 ### 2. Iniciar el Backend API (C# .NET 8)
