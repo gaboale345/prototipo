@@ -26,7 +26,7 @@ namespace BackendApi.Controllers
             IQueryable<Auditoria> query = _context.Auditorias.Include(a => a.Usuario);
 
             if (!string.IsNullOrEmpty(modulo))
-                query = query.Where(a => a.Modulo.ToLower() == modulo.ToLower());
+                query = query.Where(a => a.Modulo != null && a.Modulo.ToLower() == modulo.ToLower());
 
             var result = await query.OrderByDescending(a => a.Fecha).Take(200).ToListAsync();
             return Ok(ApiResponse<List<Auditoria>>.Ok(result));

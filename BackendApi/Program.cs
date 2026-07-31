@@ -23,10 +23,22 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
 
-// Usar SQLite local automático por defecto para garantizar funcionamiento inmediato sin depender de MySQL local
-var sqliteConnection = "Data Source=ecowash.db";
-builder.Services.AddDbContext<EcoWashDbContext>(options =>
-    options.UseSqlite(sqliteConnection));
+// Configuración dinámica de Base de Datos: MySQL para Docker Compose / Producción o SQLite para desarrollo local
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? Environment.GetEnvironmentVariable("DB_CONNECTION")
+    ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+
+if (!string.IsNullOrWhiteSpace(connectionString) && connectionString.Contains("Server=", StringComparison.OrdinalIgnoreCase))
+{
+    builder.Services.AddDbContext<EcoWashDbContext>(options =>
+        options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+}
+else
+{
+    var sqliteConnection = "Data Source=ecowash.db";
+    builder.Services.AddDbContext<EcoWashDbContext>(options =>
+        options.UseSqlite(sqliteConnection));
+}
 
 // Add Jwt Services
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -61,7 +73,7 @@ builder.Services.AddScoped<AuditoriaHelper>();
 // ── Servicios nuevos (Patrón Strategy para pasarela de pagos) ────────────────
 // IPaymentGateway: Abstracción que permite cambiar de Stripe a otro proveedor
 // sin modificar la lógica principal del sistema.
-builder.Services.AddScoped<IPaymentGateway, StripePaymentGateway>();
+builder.Services.AddScoped<IPaymentGateway, SimulatedPaymentGateway>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddScoped<IPdfService, PdfReceiptService>();
 

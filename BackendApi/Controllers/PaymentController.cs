@@ -47,6 +47,232 @@ namespace BackendApi.Controllers
         }
 
         /// <summary>
+        /// Procesa un pago simulado/ficticio sin realizar cobros reales ni contactar pasarelas externas.
+        /// Valida los datos del formulario (tarjeta o QR), genera un ID de transacción ficticio,
+        /// actualiza los estados en base de datos como Pagado, genera el comprobante PDF y envía el correo.
+        /// </summary>
+        [HttpPost("process-simulated")]
+        [Authorize]
+        public async Task<ActionResult<ApiResponse<SimulatedPaymentResponseDto>>> ProcessSimulatedPayment([FromBody] ProcessSimulatedPaymentDto dto)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+
+            ServiceOrder? order = null;
+
+            if (dto.OrderId > 0)
+            {
+                order = await _context.ServiceOrders
+                    .Include(o => o.Detalles)
+                    .Include(o => o.Cliente).ThenInclude(c => c.Usuario)
+                    .FirstOrDefaultAsync(o => o.Id == dto.OrderId);
+            }
+
+            // Si vino desde una Reserva directamente sin ServiceOrder previa
+            if (order == null && dto.ReservaId.HasValue && dto.ReservaId.Value > 0)
+            {
+                var reserva = await _context.Reservas
+                    .Include(r => r.Servicio)
+                    .Include(r => r.Cliente).ThenInclude(c => c.Usuario)
+                    .FirstOrDefaultAsync(r => r.Id == dto.ReservaId.Value);
+
+                if (reserva != null)
+                {
+                    // Buscar o crear la ServiceOrder para la reserva
+                    order = await _context.ServiceOrders
+                        .Include(o => o.Detalles)
+                        .Include(o => o.Cliente).ThenInclude(c => c.Usuario)
+                        .FirstOrDefaultAsync(o => o.Observaciones == $"Reserva#{reserva.Id}");
+
+                    if (order == null)
+                    {
+                        order = new ServiceOrder
+                        {
+                            ClienteId = reserva.ClienteId,
+                            NumeroOrden = $"ORD-RES-{reserva.Id}-{DateTime.UtcNow.Ticks.ToString()[^4..]}",
+                            Subtotal = reserva.PrecioTotal,
+                            Total = reserva.PrecioTotal,
+                            Estado = "Pendiente",
+                            Observaciones = $"Reserva#{reserva.Id}",
+                            FechaCreacion = DateTime.UtcNow,
+                            Detalles = new List<ServiceOrderDetail>
+                            {
+                                new ServiceOrderDetail
+                                {
+                                    ServicioId = reserva.ServicioId,
+                                    NombreServicio = reserva.Servicio.Nombre,
+                                    Cantidad = 1,
+                                    PrecioUnitario = reserva.Servicio.Precio,
+                                    Subtotal = reserva.PrecioTotal
+                                }
+                            }
+                        };
+                        _context.ServiceOrders.Add(order);
+                        await _context.SaveChangesAsync();
+
+                        // Re-cargar con inclusiones
+                        order = await _context.ServiceOrders
+                            .Include(o => o.Detalles)
+                            .Include(o => o.Cliente).ThenInclude(c => c.Usuario)
+                            .FirstOrDefaultAsync(o => o.Id == order.Id);
+                    }
+                }
+            }
+
+            if (order == null)
+                return NotFound(ApiResponse<SimulatedPaymentResponseDto>.Fail("Orden de servicio no encontrada."));
+
+            if (order.Cliente.UsuarioId != userId)
+                return Forbid();
+
+            if (order.Estado == "Pagada")
+                return BadRequest(ApiResponse<SimulatedPaymentResponseDto>.Fail("Esta orden ya ha sido pagada previamente."));
+
+            if (order.Estado == "Cancelada")
+                return BadRequest(ApiResponse<SimulatedPaymentResponseDto>.Fail("Esta orden fue cancelada y no se puede pagar."));
+
+            var fechaPago = DateTime.UtcNow;
+            var transactionId = $"TX-SIM-{Guid.NewGuid().ToString("N")[..10].ToUpper()}";
+            var metodoPagoNombre = dto.MetodoPago.ToLower() == "qr" ? "QR Bancario (Simulado)" : "Tarjeta Débito/Crédito (Simulada)";
+
+            // 1. Crear la transacción de pago ficticia
+            var transaction = new PaymentTransaction
+            {
+                ServiceOrderId = order.Id,
+                UsuarioId = userId,
+                TransactionId = transactionId,
+                Estado = "Pagado",
+                Monto = order.Total,
+                Moneda = "BOB",
+                MetodoPago = metodoPagoNombre,
+                ReferenciaPasarela = $"REF-DEMO-{DateTime.UtcNow:yyyyMMddHHmmss}",
+                ProveedorPago = "Pasarela Simulación EcoWash",
+                FechaCreacion = fechaPago,
+                FechaPago = fechaPago,
+                RespuestaCompletaApi = $"{{\"simulado\": true, \"metodo\": \"{dto.MetodoPago}\", \"titular\": \"{dto.TitularTarjeta ?? "Titular Demo"}\"}}"
+            };
+
+            _context.PaymentTransactions.Add(transaction);
+
+            // 2. Actualizar estado de la orden
+            order.Estado = "Pagada";
+            order.FechaPago = fechaPago;
+
+            // 3. Si viene vinculada a una Reserva, actualizar Venta y Reserva
+            if (!string.IsNullOrEmpty(order.Observaciones) && order.Observaciones.StartsWith("Reserva#"))
+            {
+                var reservaIdStr = order.Observaciones.Replace("Reserva#", "");
+                if (int.TryParse(reservaIdStr, out var resId))
+                {
+                    var venta = await _context.Ventas.FirstOrDefaultAsync(v => v.ReservaId == resId);
+                    if (venta != null)
+                    {
+                        venta.Estado = "Pagada";
+                        var pagoExistente = await _context.Pagos.AnyAsync(p => p.ReservaId == resId);
+                        if (!pagoExistente)
+                        {
+                            _context.Pagos.Add(new Pago
+                            {
+                                VentaId = venta.Id,
+                                ReservaId = resId,
+                                MetodoPagoId = dto.MetodoPago.ToLower() == "qr" ? 2 : 4,
+                                Monto = order.Total,
+                                Estado = "Completado",
+                                Referencia = transactionId,
+                                FechaPago = fechaPago
+                            });
+                        }
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            // 4. Generar recibo PDF oficial
+            string? pdfUrl = null;
+            try
+            {
+                var receiptData = new ReceiptData
+                {
+                    NumeroOrden = order.NumeroOrden,
+                    NumeroTransaccion = transactionId,
+                    NombreCliente = $"{order.Cliente.Usuario.Nombre} {order.Cliente.Usuario.Apellido}",
+                    EmailCliente = order.Cliente.Usuario.Email,
+                    FechaPago = fechaPago,
+                    TotalPagado = order.Total,
+                    MetodoPago = metodoPagoNombre,
+                    EstadoPago = "Pagado",
+                    QrContent = $"EcoWash-Orden-{order.NumeroOrden}-Tx-{transactionId}",
+                    Servicios = order.Detalles.Select(d => new ReceiptItem
+                    {
+                        NombreServicio = d.NombreServicio,
+                        Cantidad = d.Cantidad,
+                        PrecioUnitario = d.PrecioUnitario,
+                        Subtotal = d.Subtotal
+                    }).ToList()
+                };
+
+                var pdfBytes = await _pdfService.GeneratePaymentReceiptAsync(receiptData);
+                var receiptsDir = Path.Combine(Directory.GetCurrentDirectory(), "receipts");
+                if (!Directory.Exists(receiptsDir)) Directory.CreateDirectory(receiptsDir);
+                var pdfPath = Path.Combine(receiptsDir, $"recibo_{transaction.Id}.pdf");
+                await System.IO.File.WriteAllBytesAsync(pdfPath, pdfBytes);
+
+                transaction.ComprobantePdfUrl = $"/api/Receipt/{transaction.Id}/download";
+                pdfUrl = transaction.ComprobantePdfUrl;
+                await _context.SaveChangesAsync();
+
+                // Enviar confirmación por correo (asíncrono)
+                await _emailService.SendPaymentConfirmationAsync(
+                    order.Cliente.Usuario.Email,
+                    order.Cliente.Usuario.Nombre,
+                    order.NumeroOrden,
+                    order.Total,
+                    metodoPagoNombre
+                );
+
+                await _emailService.SendPaymentReceiptAsync(
+                    order.Cliente.Usuario.Email,
+                    order.Cliente.Usuario.Nombre,
+                    order.NumeroOrden,
+                    pdfBytes
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al generar comprobante PDF en pago simulado para la orden {OrderId}", order.Id);
+            }
+
+            // 5. Registrar notificación en sistema
+            _context.Notificaciones.Add(new Notificacion
+            {
+                UsuarioId = userId,
+                Titulo = "✓ Pago Simulado Exitoso",
+                Mensaje = $"Tu pago de Bs. {order.Total:N2} para la orden {order.NumeroOrden} fue procesado correctamente.",
+                Tipo = "Exito",
+                Fecha = fechaPago
+            });
+            await _context.SaveChangesAsync();
+
+            await _auditoria.RegistrarAsync("PagoSimuladoCompletado", "Pagos", "PaymentTransaction",
+                transaction.Id, null, new { order.NumeroOrden, order.Total, Metodo = dto.MetodoPago }, userId,
+                HttpContext.Connection.RemoteIpAddress?.ToString());
+
+            return Ok(ApiResponse<SimulatedPaymentResponseDto>.Ok(new SimulatedPaymentResponseDto
+            {
+                Success = true,
+                TransactionId = transactionId,
+                OrderId = order.Id,
+                NumeroOrden = order.NumeroOrden,
+                MontoTotal = order.Total,
+                MetodoPago = metodoPagoNombre,
+                FechaPago = fechaPago,
+                Estado = "Pagado",
+                ComprobantePdfUrl = pdfUrl,
+                Mensaje = "✓ Pago realizado correctamente (Modo Simulación)"
+            }, "Pago simulado completado exitosamente."));
+        }
+
+        /// <summary>
         /// Crea una sesión de pago en la pasarela para una orden existente.
         /// El monto se toma de la orden (calculado previamente desde el backend).
         /// </summary>
@@ -336,8 +562,8 @@ namespace BackendApi.Controllers
                         EmailCliente = transaction.ServiceOrder.Cliente.Usuario.Email,
                         FechaPago = transaction.FechaPago ?? DateTime.UtcNow,
                         TotalPagado = transaction.Monto,
-                        MetodoPago = transaction.MetodoPago,
-                        EstadoPago = transaction.Estado,
+                        MetodoPago = transaction.MetodoPago ?? "Tarjeta",
+                        EstadoPago = transaction.Estado ?? "Pagado",
                         QrContent = $"EcoWash-Orden-{transaction.ServiceOrder.NumeroOrden}-Tx-{transaction.TransactionId}",
                         Servicios = transaction.ServiceOrder.Detalles.Select(d => new ReceiptItem
                         {

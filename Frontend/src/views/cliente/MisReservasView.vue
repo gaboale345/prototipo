@@ -193,16 +193,16 @@
               </div>
             </div>
 
-            <!-- Opción 1: Pasarela de Pagos API (Stripe) -->
+            <!-- Opción 1: Pasarela de Pagos (Simulada) -->
             <div class="p-3 border rounded-3 mb-3 bg-light">
               <h6 class="fw-bold text-success mb-1">
-                <i class="bi bi-shield-lock-fill me-1"></i>Pagar Online con Pasarela (Stripe)
+                <i class="bi bi-shield-lock-fill me-1"></i>Pagar Online (Pasarela Simulación)
               </h6>
-              <p class="text-muted small mb-2">Paga de forma segura usando tarjeta de débito, crédito o QR con comprobante automático.</p>
+              <p class="text-muted small mb-2">Pago instantáneo simulado (Tarjeta / QR Ficticio) con generación de recibo PDF.</p>
               <button type="button" class="btn btn-success w-100 fw-bold py-2" @click="pagarConPasarela" :disabled="loadingPasarela">
                 <span v-if="loadingPasarela" class="spinner-border spinner-border-sm me-1"></span>
                 <i v-else class="bi bi-credit-card-2-front me-1"></i>
-                Pagar Bs. {{ selectedReserva.precioTotal }} en Pasarela Online
+                Simular Pago de Bs. {{ selectedReserva.precioTotal }}
               </button>
             </div>
 
@@ -424,19 +424,32 @@ const abrirModalPago = (r) => {
   selectedReserva.value = r
 }
 
-// Pagar con Pasarela de Pagos API (Stripe)
+// Pagar con Pasarela de Pagos Simulatida
 const pagarConPasarela = async () => {
   if (!selectedReserva.value) return
   loadingPasarela.value = true
   try {
-    const res = await api.post(`/Payment/create-session-reserva/${selectedReserva.value.id}`)
-    if (res.data.success && res.data.data.paymentUrl) {
-      window.location.href = res.data.data.paymentUrl
+    const res = await api.post('/Payment/process-simulated', {
+      orderId: 0,
+      reservaId: selectedReserva.value.id,
+      metodoPago: 'card',
+      titularTarjeta: 'Cliente Demo'
+    })
+    if (res.data.success) {
+      Swal.fire({
+        title: '✓ Pago Realizado Correctamente',
+        html: `Tu pago de prueba para la reserva #${selectedReserva.value.id} fue procesado exitosamente.<br>ID Transacción: <strong>${res.data.data.transactionId}</strong>`,
+        icon: 'success',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#2d6a4f'
+      })
+      selectedReserva.value = null
+      cargar()
     } else {
-      Swal.fire('Error', res.data.message || 'No se pudo generar la sesión de pago.', 'error')
+      Swal.fire('Error', res.data.message || 'No se pudo procesar el pago simulado.', 'error')
     }
   } catch (e) {
-    Swal.fire('Error de Pago', e.response?.data?.message || 'Error al conectar con la pasarela de pagos', 'error')
+    Swal.fire('Error de Pago', e.response?.data?.message || 'Error al procesar el pago simulado', 'error')
   } finally {
     loadingPasarela.value = false
   }

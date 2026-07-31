@@ -633,6 +633,33 @@ namespace BackendApi.DTOs
         public int OrderId { get; set; }
     }
 
+    public class ProcessSimulatedPaymentDto
+    {
+        [Required] public int OrderId { get; set; }
+        /// <summary>Método de pago: "card" (tarjeta) o "qr" (código QR)</summary>
+        [Required] public string MetodoPago { get; set; } = "card";
+        /// <summary>Nombre del titular (solo para confirmación simulada)</summary>
+        public string? TitularTarjeta { get; set; }
+        /// <summary>Últimos 4 dígitos de la tarjeta ficticia</summary>
+        public string? UltimosDigitosTarjeta { get; set; }
+        /// <summary>Indica si es para una Reserva directamente</summary>
+        public int? ReservaId { get; set; }
+    }
+
+    public class SimulatedPaymentResponseDto
+    {
+        public bool Success { get; set; }
+        public string TransactionId { get; set; } = string.Empty;
+        public int OrderId { get; set; }
+        public string NumeroOrden { get; set; } = string.Empty;
+        public decimal MontoTotal { get; set; }
+        public string MetodoPago { get; set; } = string.Empty;
+        public DateTime FechaPago { get; set; }
+        public string Estado { get; set; } = "Pagado";
+        public string? ComprobantePdfUrl { get; set; }
+        public string Mensaje { get; set; } = "Pago realizado correctamente";
+    }
+
     public class PaymentTransactionDto
     {
         public int Id { get; set; }

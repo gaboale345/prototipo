@@ -70,10 +70,10 @@ namespace BackendApi.Models
         [Column("stripe_session_id")]
         public string? StripeSessionId { get; set; }
 
-        /// <summary>Nombre del proveedor de pagos utilizado (ej: Stripe, PagosNet).</summary>
+        /// <summary>Nombre del proveedor de pagos utilizado (ej: Pasarela Simulación EcoWash).</summary>
         [MaxLength(50)]
         [Column("proveedor_pago")]
-        public string ProveedorPago { get; set; } = "Stripe";
+        public string ProveedorPago { get; set; } = "Pasarela Simulación EcoWash";
 
         /// <summary>Ruta al comprobante PDF generado.</summary>
         [MaxLength(500)]
