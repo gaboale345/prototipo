@@ -77,18 +77,13 @@
             <!-- Botones de selección -->
             <div class="d-flex align-items-center gap-2 mt-auto">
               <template v-if="isSelected(servicio.id)">
-                <div class="input-group input-group-sm rounded-pill border overflow-hidden">
-                  <button class="btn btn-outline-emerald border-0" @click="decreaseQty(servicio.id)">-</button>
-                  <span class="form-control text-center border-0 fw-bold bg-light">{{ getQty(servicio.id) }}</span>
-                  <button class="btn btn-outline-emerald border-0" @click="increaseQty(servicio.id)">+</button>
-                </div>
-                <button class="btn btn-danger btn-sm rounded-circle p-2" @click="removeService(servicio.id)" title="Quitar">
-                  <i class="bi bi-trash"></i>
+                <button class="btn btn-emerald w-100 rounded-pill py-2 fw-bold" @click="removeService()">
+                  <i class="bi bi-check-circle-fill me-1"></i> Seleccionado
                 </button>
               </template>
               <template v-else>
                 <button class="btn btn-outline-emerald w-100 rounded-pill py-2 fw-semibold" @click="selectService(servicio)">
-                  <i class="bi bi-plus-circle me-1"></i> Agregar Servicio
+                  Seleccionar
                 </button>
               </template>
             </div>
@@ -111,8 +106,8 @@ const loading = ref(true)
 const activeFilter = ref('Todos')
 const filterOptions = ['Todos', 'Auto', 'Moto', 'Camioneta']
 
-// Carrito local
-const selectedItems = ref({}) // { [servicioId]: { servicio, cantidad } }
+// Carrito local (Selección única para reserva)
+const selectedService = ref(null)
 
 onMounted(async () => {
   try {
@@ -132,75 +127,56 @@ const filteredServicios = computed(() => {
   return servicios.value.filter(s => s.tipoVehiculo === activeFilter.value || s.tipoVehiculo === 'Todos')
 })
 
-const isSelected = (id) => !!selectedItems.value[id]
-const getQty = (id) => selectedItems.value[id]?.cantidad || 0
+const isSelected = (id) => selectedService.value && selectedService.value.id === id
 
 const selectService = (servicio) => {
-  selectedItems.value[servicio.id] = { servicio, cantidad: 1 }
+  selectedService.value = servicio
 }
 
-const increaseQty = (id) => {
-  if (selectedItems.value[id]) {
-    selectedItems.value[id].cantidad++
-  }
+const removeService = () => {
+  selectedService.value = null
 }
 
-const decreaseQty = (id) => {
-  if (selectedItems.value[id]) {
-    if (selectedItems.value[id].cantidad > 1) {
-      selectedItems.value[id].cantidad--
-    } else {
-      delete selectedItems.value[id]
-    }
-  }
-}
+const selectedCount = computed(() => selectedService.value ? 1 : 0)
 
-const removeService = (id) => {
-  delete selectedItems.value[id]
-}
-
-const selectedCount = computed(() => {
-  return Object.values(selectedItems.value).reduce((sum, item) => sum + item.cantidad, 0)
-})
-
-const selectedTotal = computed(() => {
-  return Object.values(selectedItems.value).reduce((sum, item) => sum + (item.servicio.precio * item.cantidad), 0)
-})
+const selectedTotal = computed(() => selectedService.value ? selectedService.value.precio : 0)
 
 const proceedToOrder = () => {
-  const cartData = Object.values(selectedItems.value).map(item => ({
-    servicioId: item.servicio.id,
-    cantidad: item.cantidad,
-    nombre: item.servicio.nombre,
-    precio: item.servicio.precio
-  }))
+  if (!selectedService.value) return
+  const cartData = [{
+    servicioId: selectedService.value.id,
+    cantidad: 1,
+    nombre: selectedService.value.nombre,
+    precio: selectedService.value.precio,
+    duracion: selectedService.value.duracionMinutos
+  }]
   sessionStorage.setItem('pending_cart', JSON.stringify(cartData))
-  router.push('/cliente/orden/resumen')
+  router.push('/cliente/reservar')
 }
 </script>
 
 <style scoped>
 .text-emerald {
-  color: #2d6a4f;
+  color: #2563EB;
 }
 
 .bg-emerald {
-  background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
 }
 
 .btn-emerald {
-  background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
   color: white;
   border: none;
 }
 
 .btn-outline-emerald {
-  border-color: #2d6a4f;
-  color: #2d6a4f;
+  border-color: #2563EB;
+  color: #2563EB;
 }
 
 .btn-outline-emerald:hover {
-  background-color: #2d6a4f;
+  background-color: #2563EB;
   color: white;
 }
 
@@ -215,8 +191,8 @@ const proceedToOrder = () => {
 }
 
 .selected-card {
-  border: 2px solid #2d6a4f !important;
-  background: #f4fbf7;
+  border: 2px solid #2563EB !important;
+  background: #EFF6FF;
 }
 
 .icon-circle {

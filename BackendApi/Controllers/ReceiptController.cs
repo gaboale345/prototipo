@@ -33,7 +33,7 @@ namespace BackendApi.Controllers
         /// Si no, lo regenera dinámicamente.
         /// </summary>
         [HttpGet("{transactionId}/download")]
-        public async Task<IActionResult> DownloadReceipt(int transactionId)
+        public async Task<IActionResult> DownloadReceipt(int transactionId, [FromQuery] string embedded = "false")
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
             var role = User.FindFirstValue(ClaimTypes.Role);
@@ -90,6 +90,12 @@ namespace BackendApi.Controllers
                 // Guardar para futuras descargas
                 Directory.CreateDirectory(pdfDir);
                 await System.IO.File.WriteAllBytesAsync(pdfPath, pdfBytes);
+            }
+
+            if (embedded == "true")
+            {
+                Response.Headers.Append("Content-Disposition", "inline");
+                return File(pdfBytes, "application/pdf");
             }
 
             return File(pdfBytes, "application/pdf", $"Comprobante_{transaction.ServiceOrder.NumeroOrden}.pdf");

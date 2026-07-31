@@ -2,6 +2,8 @@
   <div class="row justify-content-center">
     <div class="col-lg-8">
       <div class="ecowash-card">
+        <Stepper :current-step="1" />
+        
         <h3 class="fw-bold mb-3"><i class="bi bi-calendar-plus text-primary me-2"></i>Solicitar Servicio de Lavado</h3>
         <p class="text-muted small mb-4">Ingresa la información requerida para que un lavador profesional asista a tu domicilio en Santa Cruz de la Sierra.</p>
 
@@ -30,23 +32,40 @@
         <form v-else @submit.prevent="handleReservar">
           <!-- SELECCIONAR SERVICIO -->
           <div class="mb-4">
-            <label class="form-label fw-bold">1. Selecciona el Tipo de Lavado</label>
+            <label class="form-label fw-bold mb-2">1. Selecciona el Servicio</label>
             <div class="row g-2">
-              <div v-for="s in servicios" :key="s.id" class="col-md-6">
+              <div
+                v-for="s in servicios"
+                :key="s.id"
+                class="col-12 col-sm-6"
+                @click="form.servicioId = s.id"
+                style="cursor: pointer;"
+              >
                 <div
-                  :class="['p-3 border rounded-3 cursor-pointer transition-all', form.servicioId === s.id ? 'border-primary bg-primary bg-opacity-10' : 'bg-white']"
-                  @click="form.servicioId = s.id"
-                  style="cursor: pointer;"
+                  class="border rounded-3 p-3 h-100 d-flex align-items-start gap-3 transition-all"
+                  :class="form.servicioId === s.id
+                    ? 'border-success border-2 bg-success bg-opacity-10 shadow-sm'
+                    : 'border-light bg-white'"
+                  style="transition: all 0.15s ease;"
                 >
-                  <div class="d-flex justify-content-between align-items-center mb-1">
-                    <span class="fw-bold">{{ s.nombre }}</span>
-                    <span class="badge bg-primary fs-6">Bs. {{ s.precio }}</span>
+                  <div
+                    class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                    :class="form.servicioId === s.id ? 'bg-success' : 'bg-light'"
+                    style="width: 38px; height: 38px;"
+                  >
+                    <i class="bi bi-droplet-half" :class="form.servicioId === s.id ? 'text-white' : 'text-success'"></i>
                   </div>
-                  <p class="text-muted extra-small mb-0">{{ s.descripcion }} ({{ s.duracionMinutos }} mins)</p>
+                  <div class="flex-grow-1 lh-sm">
+                    <div class="fw-bold small" :class="form.servicioId === s.id ? 'text-success' : 'text-dark'">{{ s.nombre }}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">{{ s.duracionEstimada }} min</div>
+                    <div class="fw-bold mt-1" :class="form.servicioId === s.id ? 'text-success' : 'text-dark'" style="font-size: 0.85rem;">Bs. {{ s.precio.toFixed(2) }}</div>
+                  </div>
+                  <i v-if="form.servicioId === s.id" class="bi bi-check-circle-fill text-success ms-auto fs-5"></i>
                 </div>
               </div>
             </div>
           </div>
+
 
           <!-- SELECCIONAR VEHÍCULO -->
           <div class="mb-4">
@@ -130,11 +149,12 @@ import { ref, onMounted, computed } from 'vue'
 import api from '../../services/api'
 import Swal from 'sweetalert2'
 import { useRouter } from 'vue-router'
+import Stepper from '../../components/Stepper.vue'
 
 const router = useRouter()
-const servicios = ref([])
 const vehiculos = ref([])
 const ubicaciones = ref([])
+const servicios = ref([])
 const reservasActivas = ref([])
 const loading = ref(false)
 const cargando = ref(true)
@@ -160,17 +180,13 @@ const fechaMinima = computed(() => {
 
 onMounted(async () => {
   try {
-    const [sRes, vRes, uRes, rRes] = await Promise.all([
-      api.get('/Servicio'),
+    const [vRes, uRes, rRes, sRes] = await Promise.all([
       api.get('/Vehiculo'),
       api.get('/Ubicacion'),
-      api.get('/Reserva')
+      api.get('/Reserva'),
+      api.get('/Servicio')
     ])
 
-    if (sRes.data.success) {
-      servicios.value = sRes.data.data
-      if (servicios.value.length > 0) form.value.servicioId = servicios.value[0].id
-    }
     if (vRes.data.success) {
       vehiculos.value = vRes.data.data
       if (vehiculos.value.length > 0) form.value.vehiculoId = vehiculos.value[0].id
@@ -178,6 +194,9 @@ onMounted(async () => {
     if (uRes.data.success) {
       ubicaciones.value = uRes.data.data
       if (ubicaciones.value.length > 0) form.value.ubicacionId = ubicaciones.value[0].id
+    }
+    if (sRes.data.success) {
+      servicios.value = sRes.data.data
     }
     if (rRes.data.success) {
       // Guardar reservas activas para validar duplicados
@@ -264,21 +283,30 @@ const handleReservar = async () => {
     return
   }
 
-  loading.value = true
-  try {
-    const res = await api.post('/Reserva', form.value)
-    loading.value = false
-    if (res.data.success) {
-      Swal.fire({
-        icon: 'success',
-        title: '¡Reserva Creada!',
-        text: 'Tu solicitud de lavado ha sido registrada. Te notificaremos cuando el empleado acepte el servicio.',
-        confirmButtonText: 'Ver Mis Reservas'
-      }).then(() => router.push('/cliente/reservas'))
-    }
-  } catch (e) {
-    loading.value = false
-    Swal.fire('Error', e.response?.data?.message || 'Error al procesar la reserva', 'error')
+  // Buscar nombre e info del servicio para mostrar en el carrito
+  const servicio = servicios.value.find(s => s.id === form.value.servicioId)
+  if (!servicio) {
+    Swal.fire('Error', 'Servicio no encontrado.', 'error')
+    return
   }
+
+  // Guardar los datos de la reserva en sessionStorage.
+  // La reserva NO se crea en la base de datos todavía.
+  // Solo se creará cuando el pago sea confirmado (flujo atómico en el backend).
+  const pendingReserva = {
+    servicioId: form.value.servicioId,
+    vehiculoId: form.value.vehiculoId,
+    ubicacionId: form.value.ubicacionId,
+    fechaProgramada: form.value.fechaProgramada,
+    observaciones: form.value.observaciones
+  }
+  sessionStorage.setItem('pending_reserva', JSON.stringify(pendingReserva))
+
+  // Guardar el carrito con la info del servicio
+  const cart = [{ servicioId: servicio.id, nombre: servicio.nombre, precio: servicio.precio, cantidad: 1 }]
+  sessionStorage.setItem('pending_cart', JSON.stringify(cart))
+
+  // Navegar a la pantalla de pago SIN el reservaId
+  router.push('/cliente/orden/resumen')
 }
 </script>

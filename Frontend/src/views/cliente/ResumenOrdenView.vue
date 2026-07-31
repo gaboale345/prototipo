@@ -1,23 +1,14 @@
 <template>
   <div class="container py-4" style="max-width: 900px;">
-    <!-- Banner Modo Demostración -->
-    <div class="alert alert-info border-0 shadow-sm rounded-4 p-3 mb-4 d-flex align-items-center gap-3 bg-gradient-info text-white">
-      <i class="bi bi-info-circle-fill fs-2"></i>
-      <div>
-        <h6 class="fw-bold mb-0">Entorno de Pruebas / Demostración</h6>
-        <small>Este checkout utiliza un <strong>método de pago ficticio y simulado</strong>. No se realizará ningún cobro real ni se procesarán datos financieros.</small>
-      </div>
-    </div>
+    <Stepper :current-step="2" />
 
     <!-- Header -->
     <div class="mb-4">
-      <router-link to="/cliente/catalogo" class="text-decoration-none text-muted small mb-2 d-inline-block">
+      <router-link to="/cliente/reservar" class="text-decoration-none text-muted small mb-2 d-inline-block">
         <i class="bi bi-arrow-left me-1"></i> Volver al Catálogo
       </router-link>
-      <h2 class="fw-bold text-emerald mb-1">
-        <i class="bi bi-receipt-cutoff me-2"></i>Resumen y Pago Simulado
-      </h2>
-      <p class="text-muted">Verifica los detalles de tu solicitud y completa el pago de prueba</p>
+      <h2 class="fw-bold text-emerald mb-1">Resumen y Pago</h2>
+      <p class="text-muted">Verifica los detalles de tu solicitud y completa el pago</p>
     </div>
 
     <div v-if="cartItems.length === 0" class="card border-0 shadow-sm rounded-4 p-5 text-center">
@@ -95,14 +86,14 @@
 
           <!-- Selección de método de pago -->
           <div class="mb-4">
-            <label class="fw-bold text-dark mb-2">Selecciona Método de Pago (Simulado)</label>
+            <label class="fw-bold text-dark mb-2">Selecciona Método de Pago</label>
             <div class="d-grid gap-2">
               <label :class="['payment-option p-3 rounded-3 border cursor-pointer d-flex align-items-center gap-3', selectedMethod === 'card' ? 'active-option' : '']">
                 <input type="radio" v-model="selectedMethod" value="card" class="form-check-input" :disabled="processing || successResult" />
                 <i class="bi bi-credit-card-2-front fs-3 text-emerald"></i>
                 <div>
-                  <strong class="d-block text-dark">💳 Tarjeta (Ficticia)</strong>
-                  <small class="text-muted">Formulario de tarjeta de crédito/débito simulado</small>
+                  <strong class="d-block text-dark">Tarjeta de Débito / Crédito</strong>
+                  <small class="text-muted">Ingresa los datos de tu tarjeta para completar el pago</small>
                 </div>
               </label>
 
@@ -110,17 +101,17 @@
                 <input type="radio" v-model="selectedMethod" value="qr" class="form-check-input" :disabled="processing || successResult" />
                 <i class="bi bi-qr-code-scan fs-3 text-emerald"></i>
                 <div>
-                  <strong class="d-block text-dark">📱 Código QR (Ficticio)</strong>
-                  <small class="text-muted">Generador de QR demostrativo instantáneo</small>
+                  <strong class="d-block text-dark">Código QR</strong>
+                  <small class="text-muted">Escanea el código QR con tu aplicación bancaria</small>
                 </div>
               </label>
             </div>
           </div>
 
-          <!-- FORMULARIO TARJETA FICTICIA -->
+          <!-- FORMULARIO TARJETA -->
           <div v-if="selectedMethod === 'card' && !successResult" class="p-3 bg-light rounded-3 mb-4">
             <h6 class="fw-bold text-dark mb-3">
-              <i class="bi bi-credit-card me-1"></i>Datos de Tarjeta Ficticia
+              <i class="bi bi-credit-card me-1"></i>Datos de Tarjeta
             </h6>
             
             <div class="mb-3">
@@ -300,11 +291,15 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import api from '../../services/api'
 import Swal from 'sweetalert2'
+import Stepper from '../../components/Stepper.vue'
 
 const router = useRouter()
+const route = useRoute()
+
+const reservaId = computed(() => route.query.reservaId)
 
 const cartItems = ref([])
 const observaciones = ref('')
@@ -326,10 +321,16 @@ const cardErrors = ref({
   cvv: ''
 })
 
+const pendingReservaData = ref(null)
+
 onMounted(() => {
-  const data = sessionStorage.getItem('pending_cart')
-  if (data) {
-    cartItems.value = JSON.parse(data)
+  const cartData = sessionStorage.getItem('pending_cart')
+  if (cartData) {
+    cartItems.value = JSON.parse(cartData)
+  }
+  const reservaData = sessionStorage.getItem('pending_reserva')
+  if (reservaData) {
+    pendingReservaData.value = JSON.parse(reservaData)
   }
 })
 
@@ -410,62 +411,59 @@ const processSimulatedPayment = async () => {
     return
   }
 
+  // Validar que tengamos los datos de la reserva pendiente
+  if (!pendingReservaData.value) {
+    Swal.fire('Error', 'No se encontraron los datos de tu reserva. Por favor vuelve a completar el formulario.', 'error')
+    router.push('/cliente/reservar')
+    return
+  }
+
   processing.value = true
 
   try {
-    // 1. Crear Orden de Servicio en el Backend
-    const orderPayload = {
-      items: cartItems.value.map(i => ({
-        servicioId: i.servicioId,
-        cantidad: i.cantidad
-      })),
-      observaciones: observaciones.value
-    }
-
-    const orderRes = await api.post('/ServiceOrder/create', orderPayload)
-
-    if (!orderRes.data.success) {
-      Swal.fire({
-        title: 'Error al crear la orden',
-        text: orderRes.data.message || 'No se pudo crear la orden',
-        icon: 'error',
-        confirmButtonColor: '#2d6a4f'
-      })
-      processing.value = false
-      return
-    }
-
-    const orderId = orderRes.data.data.id
-
     // Simulación de retraso de red (1.5 segundos) para experiencia realista
     await new Promise(resolve => setTimeout(resolve, 1500))
 
-    // 2. Procesar Pago Ficticio en el Backend
+    // Procesar Pago Ficticio en el Backend.
+    // Se envían los datos de la reserva para que el backend cree
+    // la reserva y el pago en una sola operación atómica.
     const paymentRes = await api.post('/Payment/process-simulated', {
-      orderId: orderId,
+      orderId: 0,
+      reservaId: null, // Ya no usamos reservaId previo
       metodoPago: selectedMethod.value,
       titularTarjeta: cardForm.value.name || 'Cliente Demo',
-      ultimosDigitosTarjeta: cardForm.value.number ? cardForm.value.number.slice(-4) : '4321'
+      ultimosDigitosTarjeta: cardForm.value.number ? cardForm.value.number.slice(-4) : '4321',
+      // Datos de la reserva a crear atómicamente con el pago
+      pendingReserva: pendingReservaData.value,
+      observacionesExtra: observaciones.value
     })
 
     if (paymentRes.data.success) {
       sessionStorage.removeItem('pending_cart')
+      sessionStorage.removeItem('pending_reserva')
       successResult.value = paymentRes.data.data
 
-      Swal.fire({
-        title: '✓ Pago realizado correctamente',
-        html: `Transacción de prueba procesada.<br>ID: <strong>${paymentRes.data.data.transactionId}</strong>`,
-        icon: 'success',
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#2d6a4f'
+      router.push({ 
+        path: '/cliente/pago/exito', 
+        query: { 
+          order_id: paymentRes.data.data.numeroOrden || paymentRes.data.data.orderId, 
+          session_id: paymentRes.data.data.transactionId 
+        } 
       })
     } else {
       Swal.fire('Error', paymentRes.data.message || 'Error al procesar el pago simulado.', 'error')
     }
   } catch (err) {
     console.error('Error procesando pago simulado:', err)
-    const errorMsg = err.response?.data?.message || 'Error de conexión al procesar el pago ficticio'
-    Swal.fire('Error', errorMsg, 'error')
+    let errorMsg = 'Error de conexión al procesar el pago ficticio'
+    if (err.response?.data?.message) {
+      errorMsg = err.response.data.message
+    } else if (err.response?.data?.errors) {
+      errorMsg = JSON.stringify(err.response.data.errors)
+    } else if (err.response?.data) {
+      errorMsg = JSON.stringify(err.response.data)
+    }
+    Swal.fire('Error detalle', errorMsg, 'error')
   } finally {
     processing.value = false
   }
@@ -479,18 +477,18 @@ const getReceiptUrl = (path) => {
 
 <style scoped>
 .text-emerald {
-  color: #2d6a4f;
+  color: #2563EB;
 }
 
 .btn-emerald {
-  background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
   color: white;
   border: none;
   transition: all 0.3s ease;
 }
 
 .btn-emerald:hover:not(:disabled) {
-  background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
+  background: linear-gradient(135deg, #1D4ED8 0%, #1e40af 100%);
   transform: translateY(-2px);
 }
 
@@ -507,8 +505,8 @@ const getReceiptUrl = (path) => {
 }
 
 .active-option {
-  border-color: #2d6a4f !important;
-  background-color: #f4fbf7 !important;
+  border-color: #2563EB !important;
+  background-color: #EFF6FF !important;
 }
 
 .cursor-pointer {

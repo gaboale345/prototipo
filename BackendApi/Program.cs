@@ -62,6 +62,20 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
         ClockSkew = TimeSpan.Zero
     };
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var token = context.Request.Query["token"];
+            var path = context.HttpContext.Request.Path;
+            // Permitir token por query string para descargar PDFs
+            if (!string.IsNullOrEmpty(token) && path.StartsWithSegments("/api/Receipt"))
+            {
+                context.Token = token;
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddAuthorization();

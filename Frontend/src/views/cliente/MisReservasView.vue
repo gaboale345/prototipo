@@ -53,10 +53,7 @@
                   <button v-if="r.estado === 'Pendiente'" @click="cancelarReserva(r)" class="btn btn-sm btn-outline-danger border-0" title="Cancelar reserva">
                     <i class="bi bi-x-circle"></i>
                   </button>
-                  <!-- Pagar (Aceptada o Finalizada) -->
-                  <button v-if="r.estado === 'Aceptada' || r.estado === 'Finalizada'" @click="abrirModalPago(r)" class="btn btn-sm btn-outline-success" title="Pagar">
-                    <i class="bi bi-credit-card me-1"></i>Pagar
-                  </button>
+                  <!-- Pagar (Aceptada o Finalizada) (REMOVED: payment is now automatic) -->
                   <!-- Calificar (solo Finalizada) -->
                   <button v-if="r.estado === 'Finalizada'" @click="abrirCalificacion(r)" class="btn btn-sm btn-outline-warning" title="Calificar servicio">
                     <i class="bi bi-star-fill me-1"></i>Calificar

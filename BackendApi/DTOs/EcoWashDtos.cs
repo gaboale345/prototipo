@@ -635,15 +635,28 @@ namespace BackendApi.DTOs
 
     public class ProcessSimulatedPaymentDto
     {
-        [Required] public int OrderId { get; set; }
+        public int? OrderId { get; set; }
         /// <summary>Método de pago: "card" (tarjeta) o "qr" (código QR)</summary>
         [Required] public string MetodoPago { get; set; } = "card";
         /// <summary>Nombre del titular (solo para confirmación simulada)</summary>
         public string? TitularTarjeta { get; set; }
         /// <summary>Últimos 4 dígitos de la tarjeta ficticia</summary>
         public string? UltimosDigitosTarjeta { get; set; }
-        /// <summary>Indica si es para una Reserva directamente</summary>
+        /// <summary>Indica si es para una Reserva directamente (flujo viejo - deprecated)</summary>
         public int? ReservaId { get; set; }
+        /// <summary>Datos de la reserva a crear atómicamente con el pago (flujo nuevo)</summary>
+        public PendingReservaDto? PendingReserva { get; set; }
+        /// <summary>Observaciones adicionales del cliente en la pantalla de pago</summary>
+        public string? ObservacionesExtra { get; set; }
+    }
+
+    public class PendingReservaDto
+    {
+        [Required] public int ServicioId { get; set; }
+        [Required] public int VehiculoId { get; set; }
+        [Required] public int UbicacionId { get; set; }
+        [Required] public DateTime FechaProgramada { get; set; }
+        public string? Observaciones { get; set; }
     }
 
     public class SimulatedPaymentResponseDto

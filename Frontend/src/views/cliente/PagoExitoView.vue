@@ -1,7 +1,9 @@
 <template>
-  <div class="container py-5 d-flex align-items-center justify-content-center min-vh-100">
-    <div class="card border-0 shadow-lg rounded-4 p-5 text-center" style="max-width: 550px; width: 100%;">
-      <!-- Icono animado -->
+  <div class="container py-4">
+    <Stepper :current-step="3" />
+    <div class="d-flex align-items-center justify-content-center" style="min-height: calc(100vh - 200px);">
+      <div class="card border-0 shadow-lg rounded-4 p-5 text-center" style="max-width: 550px; width: 100%;">
+        <!-- Icono animado -->
       <div class="success-icon-circle mx-auto mb-4">
         <i class="bi bi-check-lg fs-1 text-white"></i>
       </div>
@@ -35,6 +37,7 @@
           <i class="bi bi-house me-1"></i> Volver al Inicio
         </router-link>
       </div>
+      </div>
     </div>
   </div>
 </template>
@@ -43,6 +46,7 @@
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '../../services/api'
+import Stepper from '../../components/Stepper.vue'
 
 const route = useRoute()
 const orderId = computed(() => route.query.order_id || '')
@@ -62,11 +66,11 @@ onMounted(async () => {
 
 <style scoped>
 .text-emerald {
-  color: #2d6a4f;
+  color: #2563EB;
 }
 
 .btn-emerald {
-  background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
   color: white;
   border: none;
 }
@@ -75,11 +79,11 @@ onMounted(async () => {
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #2d6a4f 0%, #52b788 100%);
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 25px rgba(45, 106, 79, 0.3);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
   animation: popIn 0.5s ease-out;
 }
 

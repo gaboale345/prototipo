@@ -19,7 +19,10 @@ namespace BackendApi.Middleware
             context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
 
             // Protección contra clickjacking
-            context.Response.Headers.Append("X-Frame-Options", "DENY");
+            if (!context.Request.Path.StartsWithSegments("/api/Receipt"))
+            {
+                context.Response.Headers.Append("X-Frame-Options", "DENY");
+            }
 
             // Protección XSS del navegador (legacy, pero sigue siendo útil)
             context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");

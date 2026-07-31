@@ -35,7 +35,7 @@
 
 <style scoped>
 .btn-emerald {
-  background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
   color: white;
   border: none;
 }

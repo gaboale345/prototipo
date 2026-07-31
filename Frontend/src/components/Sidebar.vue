@@ -61,20 +61,12 @@
         <i class="bi bi-house-door"></i> Inicio
       </router-link>
 
-      <router-link to="/cliente/catalogo" class="nav-link-custom" active-class="active" @click="$emit('close')">
-        <i class="bi bi-grid-3x3-gap"></i> Catálogo Servicios
-      </router-link>
-
-      <router-link to="/cliente/reservar" class="nav-link-custom" active-class="active" @click="$emit('close')">
-        <i class="bi bi-plus-circle"></i> Solicitar Lavado
+      <router-link to="/cliente/reservas" class="nav-link-custom" active-class="active" @click="$emit('close')">
+        <i class="bi bi-clock-history"></i> Mis Reservas
       </router-link>
 
       <router-link to="/cliente/pagos" class="nav-link-custom" active-class="active" @click="$emit('close')">
         <i class="bi bi-wallet2"></i> Mis Pagos &amp; Recibos
-      </router-link>
-
-      <router-link to="/cliente/reservas" class="nav-link-custom" active-class="active" @click="$emit('close')">
-        <i class="bi bi-clock-history"></i> Mis Reservas
       </router-link>
 
       <router-link to="/cliente/vehiculos" class="nav-link-custom" active-class="active" @click="$emit('close')">

@@ -37,134 +37,118 @@ namespace BackendApi.Services.Pdf
                 {
                     container.Page(page =>
                     {
-                        page.Size(PageSizes.A4);
-                        page.Margin(40);
-                        page.DefaultTextStyle(x => x.FontSize(11));
+                        // Tamaño personalizado similar al diseño web apaisado
+                        page.Size(650, 400); 
+                        page.Margin(0);
+                        page.DefaultTextStyle(x => x.FontSize(11).FontFamily("Arial"));
 
-                        // ── ENCABEZADO ──
-                        page.Header().Column(col =>
-                        {
-                            col.Item().Row(row =>
-                            {
-                                row.RelativeItem().Column(c =>
-                                {
-                                    c.Item().Text("🌿 EcoWash Direct").FontSize(24).Bold().FontColor("#2d6a4f");
-                                    c.Item().Text("Lavado Ecológico a Domicilio").FontSize(10).FontColor("#888888");
-                                    c.Item().Text("Santa Cruz de la Sierra, Bolivia").FontSize(9).FontColor("#aaaaaa");
-                                });
-                                row.ConstantItem(120).AlignRight().Column(c =>
-                                {
-                                    c.Item().Text("COMPROBANTE").FontSize(14).Bold().FontColor("#2d6a4f");
-                                    c.Item().Text("DE PAGO").FontSize(14).Bold().FontColor("#2d6a4f");
-                                });
-                            });
-                            col.Item().PaddingVertical(10).LineHorizontal(2).LineColor("#2d6a4f");
-                        });
-
-                        // ── CONTENIDO ──
+                        // ── CONTENIDO PRINCIPAL ──
                         page.Content().Column(col =>
                         {
-                            // Información de la orden
-                            col.Item().PaddingTop(10).Row(row =>
+                            // ── HEADER VERDE OSCURO ──
+                            col.Item().Background("#198754").Padding(15).Row(row =>
                             {
                                 row.RelativeItem().Column(c =>
                                 {
-                                    c.Item().Text($"Orden: {receipt.NumeroOrden}").Bold().FontSize(12);
-                                    c.Item().Text($"Transacción: {receipt.NumeroTransaccion}").FontSize(10).FontColor("#555555");
+                                    c.Item().Text("EcoWash Direct").FontSize(18).Bold().FontColor("#ffffff");
+                                    c.Item().Text("Comprobante de Pago Electrónico").FontSize(10).FontColor("#e8f5e9");
                                 });
-                                row.RelativeItem().AlignRight().Column(c =>
+                                row.ConstantItem(180).AlignRight().AlignMiddle().Column(c =>
                                 {
-                                    c.Item().Text($"Fecha: {receipt.FechaPago:dd/MM/yyyy}").FontSize(10);
-                                    c.Item().Text($"Hora: {receipt.FechaPago:HH:mm:ss} UTC").FontSize(10);
+                                    c.Item().Background("#212529").PaddingVertical(5).PaddingHorizontal(10).AlignCenter().Text("✓ PAGADO EXITOSAMENTE").FontSize(9).Bold().FontColor("#ffffff");
                                 });
                             });
 
-                            // Datos del cliente
-                            col.Item().PaddingTop(15).Background("#f8f9fa").Padding(12).Column(c =>
+                            // ── CUERPO (Detalles Orden y Cliente) ──
+                            col.Item().PaddingTop(15).Background("#f8f9fa").Border(1).BorderColor("#dee2e6").Padding(15).Row(row =>
                             {
-                                c.Item().Text("DATOS DEL CLIENTE").Bold().FontSize(10).FontColor("#2d6a4f");
-                                c.Item().PaddingTop(5).Text($"Nombre: {receipt.NombreCliente}").FontSize(10);
-                                c.Item().Text($"Email: {receipt.EmailCliente}").FontSize(10);
+                                // Detalles Orden
+                                row.RelativeItem().Column(c =>
+                                {
+                                    c.Item().Text("DETALLES DE ORDEN").Bold().FontSize(8).FontColor("#6c757d");
+                                    c.Item().PaddingTop(5).Row(r => { r.RelativeItem().Text("Orden Nº:").FontSize(9).FontColor("#6c757d"); r.RelativeItem().AlignRight().Text(receipt.NumeroOrden).Bold().FontSize(9); });
+                                    c.Item().Row(r => { r.RelativeItem().Text("Fecha:").FontSize(9).FontColor("#6c757d"); r.RelativeItem().AlignRight().Text($"{receipt.FechaPago:dd/MM/yyyy}").Bold().FontSize(9); });
+                                    c.Item().Row(r => { r.RelativeItem().Text("Hora:").FontSize(9).FontColor("#6c757d"); r.RelativeItem().AlignRight().Text($"{receipt.FechaPago:HH:mm}").Bold().FontSize(9); });
+                                });
+
+                                row.ConstantItem(1).Background("#dee2e6"); // Linea divisoria vertical
+                                row.ConstantItem(15); // Espacio
+
+                                // Datos del Cliente
+                                row.RelativeItem().Column(c =>
+                                {
+                                    c.Item().Text("DATOS DEL CLIENTE").Bold().FontSize(8).FontColor("#6c757d");
+                                    c.Item().PaddingTop(5).Row(r => { r.RelativeItem().Text("Nombre:").FontSize(9).FontColor("#6c757d"); r.RelativeItem().AlignRight().Text(receipt.NombreCliente).Bold().FontSize(9); });
+                                    c.Item().Row(r => { r.RelativeItem().Text("Email:").FontSize(9).FontColor("#6c757d"); r.RelativeItem().AlignRight().Text(receipt.EmailCliente).Bold().FontSize(9); });
+                                });
                             });
 
-                            // Tabla de servicios
-                            col.Item().PaddingTop(15).Text("SERVICIOS CONTRATADOS").Bold().FontSize(10).FontColor("#2d6a4f");
-                            col.Item().PaddingTop(5).Table(table =>
+                            // ── TABLA DE SERVICIOS ──
+                            col.Item().PaddingTop(15).Table(table =>
                             {
                                 table.ColumnsDefinition(columns =>
                                 {
-                                    columns.RelativeColumn(4); // Servicio
+                                    columns.RelativeColumn(3); // Servicio
                                     columns.RelativeColumn(1); // Cantidad
-                                    columns.RelativeColumn(2); // Precio Unit.
-                                    columns.RelativeColumn(2); // Subtotal
+                                    columns.RelativeColumn(1.5f); // Precio Unit.
+                                    columns.RelativeColumn(1.5f); // Subtotal
                                 });
 
                                 // Header
                                 table.Header(header =>
                                 {
-                                    header.Cell().Background("#2d6a4f").Padding(6).Text("Servicio").FontColor("#ffffff").Bold().FontSize(10);
-                                    header.Cell().Background("#2d6a4f").Padding(6).AlignCenter().Text("Cant.").FontColor("#ffffff").Bold().FontSize(10);
-                                    header.Cell().Background("#2d6a4f").Padding(6).AlignRight().Text("P. Unit.").FontColor("#ffffff").Bold().FontSize(10);
-                                    header.Cell().Background("#2d6a4f").Padding(6).AlignRight().Text("Subtotal").FontColor("#ffffff").Bold().FontSize(10);
+                                    header.Cell().Background("#198754").Padding(8).Text("SERVICIO").FontColor("#ffffff").Bold().FontSize(9);
+                                    header.Cell().Background("#198754").Padding(8).AlignCenter().Text("CANT.").FontColor("#ffffff").Bold().FontSize(9);
+                                    header.Cell().Background("#198754").Padding(8).AlignRight().Text("P. UNIT.").FontColor("#ffffff").Bold().FontSize(9);
+                                    header.Cell().Background("#198754").Padding(8).AlignRight().Text("SUBTOTAL").FontColor("#ffffff").Bold().FontSize(9);
                                 });
 
                                 // Filas
-                                bool alt = false;
                                 foreach (var item in receipt.Servicios)
                                 {
-                                    var bg = alt ? "#f8f9fa" : "#ffffff";
-                                    table.Cell().Background(bg).Padding(6).Text(item.NombreServicio).FontSize(10);
-                                    table.Cell().Background(bg).Padding(6).AlignCenter().Text(item.Cantidad.ToString()).FontSize(10);
-                                    table.Cell().Background(bg).Padding(6).AlignRight().Text($"Bs. {item.PrecioUnitario:N2}").FontSize(10);
-                                    table.Cell().Background(bg).Padding(6).AlignRight().Text($"Bs. {item.Subtotal:N2}").FontSize(10);
-                                    alt = !alt;
+                                    table.Cell().BorderBottom(1).BorderColor("#dee2e6").Padding(8).Text(item.NombreServicio).FontSize(9);
+                                    table.Cell().BorderBottom(1).BorderColor("#dee2e6").Padding(8).AlignCenter().Text(item.Cantidad.ToString()).FontSize(9);
+                                    table.Cell().BorderBottom(1).BorderColor("#dee2e6").Padding(8).AlignRight().Text($"Bs. {item.PrecioUnitario:N2}").FontSize(9);
+                                    table.Cell().BorderBottom(1).BorderColor("#dee2e6").Padding(8).AlignRight().Text($"Bs. {item.Subtotal:N2}").Bold().FontSize(9);
                                 }
                             });
 
                             // Total
-                            col.Item().PaddingTop(10).AlignRight().Row(row =>
+                            col.Item().Background("#f8f9fa").Padding(10).AlignRight().Row(row =>
                             {
                                 row.RelativeItem();
-                                row.ConstantItem(200).Background("#e8f5e9").Padding(12).Column(c =>
+                                row.ConstantItem(250).Row(r =>
                                 {
-                                    c.Item().Row(r =>
-                                    {
-                                        r.RelativeItem().Text("TOTAL PAGADO:").Bold().FontSize(13).FontColor("#2d6a4f");
-                                        r.RelativeItem().AlignRight().Text($"Bs. {receipt.TotalPagado:N2}").Bold().FontSize(13).FontColor("#2d6a4f");
-                                    });
+                                    r.RelativeItem().AlignRight().Text("TOTAL PAGADO").Bold().FontSize(10).FontColor("#6c757d");
+                                    r.ConstantItem(15);
+                                    r.ConstantItem(100).AlignRight().Text($"Bs. {receipt.TotalPagado:N2}").Bold().FontSize(14).FontColor("#212529");
                                 });
                             });
 
-                            // Info de pago
+                            // ── INFO DE PAGO Y QR ──
                             col.Item().PaddingTop(15).Row(row =>
                             {
                                 row.RelativeItem().Column(c =>
                                 {
-                                    c.Item().Text("INFORMACIÓN DE PAGO").Bold().FontSize(10).FontColor("#2d6a4f");
-                                    c.Item().PaddingTop(5).Text($"Método: {receipt.MetodoPago}").FontSize(10);
-                                    c.Item().Text($"Estado: {receipt.EstadoPago}").FontSize(10);
+                                    c.Item().Text("INFORMACIÓN DE PAGO").Bold().FontSize(8).FontColor("#6c757d");
+                                    c.Item().PaddingTop(5).Row(r => { r.ConstantItem(80).Text("Método:").FontSize(9).FontColor("#6c757d"); r.RelativeItem().Text(receipt.MetodoPago).Bold().FontSize(9); });
+                                    c.Item().Row(r => { r.ConstantItem(80).Text("Transacción ID:").FontSize(9).FontColor("#6c757d"); r.RelativeItem().Text(receipt.NumeroTransaccion).FontSize(9).FontColor("#6c757d"); });
                                 });
 
-                                // QR Code
+                                // QR Code Box
                                 if (!string.IsNullOrEmpty(receipt.QrContent))
                                 {
-                                    row.ConstantItem(100).AlignRight().Column(c =>
+                                    row.ConstantItem(180).Background("#f8f9fa").Border(1).BorderColor("#dee2e6").Padding(5).Row(r =>
                                     {
                                         var qrBytes = GenerateQrCode(receipt.QrContent);
                                         if (qrBytes != null)
                                         {
-                                            c.Item().Image(qrBytes).FitWidth();
-                                            c.Item().AlignCenter().Text("Escanear para consultar").FontSize(7).FontColor("#888888");
+                                            r.ConstantItem(40).Background("#ffffff").Border(1).BorderColor("#dee2e6").Padding(2).Image(qrBytes).FitWidth();
                                         }
+                                        r.RelativeItem().PaddingLeft(10).AlignMiddle().Text("Escanea el código QR para validar la autenticidad de este comprobante electrónico.").FontSize(7).FontColor("#6c757d");
                                     });
                                 }
                             });
-
-                            // Nota final
-                            col.Item().PaddingTop(20).Background("#fff3cd").Padding(10).Text(
-                                "Este comprobante es un documento válido de su transacción con EcoWash Direct. " +
-                                "Conserve este documento para cualquier reclamo o consulta."
-                            ).FontSize(8).FontColor("#856404");
                         });
 
                         // ── PIE DE PÁGINA ──

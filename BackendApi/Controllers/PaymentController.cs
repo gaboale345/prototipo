@@ -55,9 +55,98 @@ namespace BackendApi.Controllers
         [Authorize]
         public async Task<ActionResult<ApiResponse<SimulatedPaymentResponseDto>>> ProcessSimulatedPayment([FromBody] ProcessSimulatedPaymentDto dto)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+            try
+            {
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+                ServiceOrder? order = null;
 
-            ServiceOrder? order = null;
+                // ── FLUJO NUEVO: Crear reserva y pago atómicamente ──
+                // Si el frontend envía los datos de la reserva pendiente (pendingReserva),
+                // la creamos en este momento junto con el pago. Así nunca quedan reservas
+                // huérfanas si el usuario abandona la pantalla de pago sin confirmar.
+                if (dto.PendingReserva != null)
+                {
+                    var cliente = await _context.Clientes
+                        .Include(c => c.Usuario)
+                        .FirstOrDefaultAsync(c => c.UsuarioId == userId);
+                    if (cliente == null)
+                        return BadRequest(ApiResponse<SimulatedPaymentResponseDto>.Fail("Solo los clientes registrados pueden realizar reservas."));
+
+                    var servicio = await _context.Servicios.FindAsync(dto.PendingReserva.ServicioId);
+                    if (servicio == null || !servicio.Activo)
+                        return BadRequest(ApiResponse<SimulatedPaymentResponseDto>.Fail("El servicio seleccionado no está disponible."));
+
+                    var vehiculo = await _context.Vehiculos.FirstOrDefaultAsync(v =>
+                        v.Id == dto.PendingReserva.VehiculoId && v.ClienteId == cliente.Id && v.Activo);
+                    if (vehiculo == null)
+                        return BadRequest(ApiResponse<SimulatedPaymentResponseDto>.Fail("El vehículo no pertenece al cliente o no está registrado."));
+
+                    var ubicacion = await _context.Ubicaciones.FirstOrDefaultAsync(u =>
+                        u.Id == dto.PendingReserva.UbicacionId && u.ClienteId == cliente.Id && u.Activo);
+                    if (ubicacion == null)
+                        return BadRequest(ApiResponse<SimulatedPaymentResponseDto>.Fail("Ubicación inválida."));
+
+                    // Verificar que no haya reserva activa con el mismo vehículo
+                    var reservaActivaExistente = await _context.Reservas.AnyAsync(r =>
+                        r.VehiculoId == dto.PendingReserva.VehiculoId &&
+                        r.ClienteId == cliente.Id &&
+                        (r.Estado == "Pendiente" || r.Estado == "Aceptada" || r.Estado == "EnProceso"));
+                    if (reservaActivaExistente)
+                        return BadRequest(ApiResponse<SimulatedPaymentResponseDto>.Fail("Ya tienes una reserva activa con este vehículo. Cancela la reserva anterior antes de crear una nueva."));
+
+                    // Asignación automática de empleado
+                    int? empleadoId = null;
+                    var disponible = await _context.Empleados.FirstOrDefaultAsync(e => e.Activo && e.Disponible);
+                    if (disponible != null) empleadoId = disponible.Id;
+
+                    // Crear la reserva directamente en estado Aceptada (ya que el pago se hará inmediatamente)
+                    var reservaNueva = new Reserva
+                    {
+                        ClienteId = cliente.Id,
+                        EmpleadoId = empleadoId,
+                        VehiculoId = vehiculo.Id,
+                        UbicacionId = ubicacion.Id,
+                        ServicioId = servicio.Id,
+                        FechaProgramada = dto.PendingReserva.FechaProgramada,
+                        Estado = "Aceptada",
+                        PrecioTotal = servicio.Precio,
+                        Observaciones = dto.PendingReserva.Observaciones ?? dto.ObservacionesExtra ?? "",
+                        FechaCreacion = DateTime.UtcNow
+                    };
+                    _context.Reservas.Add(reservaNueva);
+                    await _context.SaveChangesAsync();
+
+                    // Crear la ServiceOrder vinculada a la reserva
+                    order = new ServiceOrder
+                    {
+                        ClienteId = cliente.Id,
+                        NumeroOrden = $"ORD-RES-{reservaNueva.Id}-{DateTime.UtcNow.Ticks.ToString()[^4..]}",
+                        Subtotal = servicio.Precio,
+                        Total = servicio.Precio,
+                        Estado = "Pendiente",
+                        Observaciones = $"Reserva#{reservaNueva.Id}",
+                        FechaCreacion = DateTime.UtcNow,
+                        Detalles = new List<ServiceOrderDetail>
+                        {
+                            new ServiceOrderDetail
+                            {
+                                ServicioId = servicio.Id,
+                                NombreServicio = servicio.Nombre,
+                                Cantidad = 1,
+                                PrecioUnitario = servicio.Precio,
+                                Subtotal = servicio.Precio
+                            }
+                        }
+                    };
+                    _context.ServiceOrders.Add(order);
+                    await _context.SaveChangesAsync();
+
+                    // Re-cargar con todas las inclusiones necesarias
+                    order = await _context.ServiceOrders
+                        .Include(o => o.Detalles)
+                        .Include(o => o.Cliente).ThenInclude(c => c.Usuario)
+                        .FirstOrDefaultAsync(o => o.Id == order.Id);
+                }
 
             if (dto.OrderId > 0)
             {
@@ -67,7 +156,7 @@ namespace BackendApi.Controllers
                     .FirstOrDefaultAsync(o => o.Id == dto.OrderId);
             }
 
-            // Si vino desde una Reserva directamente sin ServiceOrder previa
+            // Si vino desde una Reserva directamente sin ServiceOrder previa (flujo viejo)
             if (order == null && dto.ReservaId.HasValue && dto.ReservaId.Value > 0)
             {
                 var reserva = await _context.Reservas
@@ -163,6 +252,12 @@ namespace BackendApi.Controllers
                 var reservaIdStr = order.Observaciones.Replace("Reserva#", "");
                 if (int.TryParse(reservaIdStr, out var resId))
                 {
+                    var reservaUpdate = await _context.Reservas.FirstOrDefaultAsync(r => r.Id == resId);
+                    if (reservaUpdate != null)
+                    {
+                        reservaUpdate.Estado = "Aceptada"; // o Pagada
+                    }
+
                     var venta = await _context.Ventas.FirstOrDefaultAsync(v => v.ReservaId == resId);
                     if (venta != null)
                     {
@@ -269,7 +364,12 @@ namespace BackendApi.Controllers
                 Estado = "Pagado",
                 ComprobantePdfUrl = pdfUrl,
                 Mensaje = "✓ Pago realizado correctamente (Modo Simulación)"
-            }, "Pago simulado completado exitosamente."));
+            }, "Pago simulado procesado exitosamente."));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<SimulatedPaymentResponseDto>.Fail($"Error interno: {ex.Message} - {ex.InnerException?.Message} - {ex.StackTrace}"));
+            }
         }
 
         /// <summary>
