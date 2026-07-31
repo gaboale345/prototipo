@@ -2,8 +2,11 @@ using BackendApi.Data;
 using BackendApi.DTOs;
 using BackendApi.Helpers;
 using BackendApi.Models;
+using BackendApi.Services.Email;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BackendApi.Controllers
 {
@@ -14,12 +17,14 @@ namespace BackendApi.Controllers
         private readonly EcoWashDbContext _context;
         private readonly JwtHelper _jwtHelper;
         private readonly AuditoriaHelper _auditoria;
+        private readonly IEmailService _emailService;
 
-        public AuthController(EcoWashDbContext context, JwtHelper jwtHelper, AuditoriaHelper auditoria)
+        public AuthController(EcoWashDbContext context, JwtHelper jwtHelper, AuditoriaHelper auditoria, IEmailService emailService)
         {
             _context = context;
             _jwtHelper = jwtHelper;
             _auditoria = auditoria;
+            _emailService = emailService;
         }
 
         [HttpPost("login")]
@@ -37,6 +42,12 @@ namespace BackendApi.Controllers
             if (!usuario.Activo)
             {
                 return BadRequest(ApiResponse<LoginResponseDto>.Fail("El usuario se encuentra inactivo"));
+            }
+
+            // NUEVA VALIDACIÓN: Verificar que el email esté verificado antes de permitir login
+            if (!usuario.EmailVerificado)
+            {
+                return BadRequest(ApiResponse<LoginResponseDto>.Fail("EMAIL_NO_VERIFICADO"));
             }
 
             usuario.UltimoAcceso = DateTime.UtcNow;
@@ -83,6 +94,7 @@ namespace BackendApi.Controllers
                 RolId = rolCliente.Id,
                 EmprendimientoId = 1,
                 Activo = true,
+                EmailVerificado = false, // CAMBIO: email NO verificado inicialmente
                 FechaCreacion = DateTime.UtcNow
             };
 
@@ -98,9 +110,26 @@ namespace BackendApi.Controllers
             _context.Clientes.Add(cliente);
             await _context.SaveChangesAsync();
 
+            // NUEVO: Generar código OTP y enviarlo por email
+            var otpCode = EmailVerificationController.GenerateOtpCode();
+            var verification = new EmailVerification
+            {
+                UsuarioId = usuario.Id,
+                Codigo = otpCode,
+                FechaCreacion = DateTime.UtcNow,
+                FechaExpiracion = DateTime.UtcNow.AddMinutes(10),
+                Usado = false,
+                Intentos = 0
+            };
+            _context.EmailVerifications.Add(verification);
+            await _context.SaveChangesAsync();
+
+            // Enviar código OTP por email
+            await _emailService.SendVerificationCodeAsync(usuario.Email, usuario.Nombre, otpCode);
+
             await _auditoria.RegistrarAsync("RegistroCliente", "Auth", "Cliente", cliente.Id, null, new { dto.Nombre, dto.Email }, usuario.Id, HttpContext.Connection.RemoteIpAddress?.ToString());
 
-            return Ok(ApiResponse<string>.Ok("Registro completado exitosamente", "Usuario creado con éxito"));
+            return Ok(ApiResponse<string>.Ok("Registro completado. Se ha enviado un código de verificación a tu correo electrónico.", "Usuario creado con éxito"));
         }
 
         [HttpPost("recuperar-password")]
@@ -136,7 +165,22 @@ namespace BackendApi.Controllers
 
             await _context.SaveChangesAsync();
 
+            // Auditoría de cambio de contraseña
+            await _auditoria.RegistrarAsync("CambioPassword", "Auth", "Usuario", usuario.Id, null, null, usuario.Id, HttpContext.Connection.RemoteIpAddress?.ToString());
+
             return Ok(ApiResponse<string>.Ok("Contraseña actualizada con éxito"));
+        }
+
+        /// <summary>
+        /// Registra el cierre de sesión en el sistema de auditoría.
+        /// </summary>
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<ActionResult<ApiResponse<string>>> Logout()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+            await _auditoria.RegistrarAsync("Logout", "Auth", "Usuario", userId, null, null, userId, HttpContext.Connection.RemoteIpAddress?.ToString());
+            return Ok(ApiResponse<string>.Ok("Sesión cerrada correctamente"));
         }
     }
 }

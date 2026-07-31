@@ -38,6 +38,10 @@
         <i class="bi bi-cash-stack"></i> Ventas &amp; Facturas
       </router-link>
 
+      <router-link to="/admin/pagos" class="nav-link-custom" active-class="active" @click="$emit('close')">
+        <i class="bi bi-credit-card"></i> Gestión de Pagos
+      </router-link>
+
       <router-link to="/admin/reportes" class="nav-link-custom" active-class="active" @click="$emit('close')">
         <i class="bi bi-bar-chart-line"></i> Reportes
       </router-link>
@@ -57,8 +61,16 @@
         <i class="bi bi-house-door"></i> Inicio
       </router-link>
 
+      <router-link to="/cliente/catalogo" class="nav-link-custom" active-class="active" @click="$emit('close')">
+        <i class="bi bi-grid-3x3-gap"></i> Catálogo Servicios
+      </router-link>
+
       <router-link to="/cliente/reservar" class="nav-link-custom" active-class="active" @click="$emit('close')">
         <i class="bi bi-plus-circle"></i> Solicitar Lavado
+      </router-link>
+
+      <router-link to="/cliente/pagos" class="nav-link-custom" active-class="active" @click="$emit('close')">
+        <i class="bi bi-wallet2"></i> Mis Pagos &amp; Recibos
       </router-link>
 
       <router-link to="/cliente/reservas" class="nav-link-custom" active-class="active" @click="$emit('close')">

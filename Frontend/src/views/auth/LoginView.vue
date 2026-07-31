@@ -90,7 +90,12 @@ const handleLogin = async () => {
     else if (res.rol === 'Empleado') router.push('/empleado/dashboard')
     else router.push('/cliente/dashboard')
   } else {
-    error.value = res.message
+    if (res.message === 'EMAIL_NO_VERIFICADO') {
+      localStorage.setItem('unverified_email', email.value)
+      router.push({ path: '/verify-email', query: { email: email.value } })
+    } else {
+      error.value = res.message
+    }
   }
 }
 </script>

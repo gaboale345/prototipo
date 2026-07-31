@@ -47,3 +47,12 @@ Thumbs.db
 
 # Documentos (excluir PDFs)
 *.pdf
+receipts/
+
+# Environment Variables
+.env
+*.env
+
+# Keys and Build Artifacts
+*.pem
+publish/

@@ -41,8 +41,8 @@ namespace BackendApi.DTOs
 
         [Required(ErrorMessage = "La contraseña es obligatoria")]
         [MinLength(8, ErrorMessage = "Mínimo 8 caracteres")]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
-            ErrorMessage = "La contraseña debe tener mayúsculas, minúsculas, número y símbolo")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$",
+            ErrorMessage = "La contraseña debe tener al menos 8 caracteres, incluyendo mayúscula, minúscula y número")]
         public string Password { get; set; } = string.Empty;
 
         [MaxLength(20)]
@@ -552,5 +552,138 @@ namespace BackendApi.DTOs
 
         public static ApiResponse<T> Fail(string message, List<string>? errors = null)
             => new() { Success = false, Message = message, Errors = errors ?? new() };
+    }
+
+    // ── Email Verification DTOs ─────────────────────────────────────────────
+
+    public class VerifyEmailDto
+    {
+        [Required(ErrorMessage = "El email es obligatorio")]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "El código es obligatorio")]
+        [StringLength(6, MinimumLength = 6, ErrorMessage = "El código debe tener 6 dígitos")]
+        public string Codigo { get; set; } = string.Empty;
+    }
+
+    public class ResendCodeDto
+    {
+        [Required(ErrorMessage = "El email es obligatorio")]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+    }
+
+    // ── Service Order DTOs ──────────────────────────────────────────────────
+
+    public class CreateServiceOrderDto
+    {
+        [Required(ErrorMessage = "Debe seleccionar al menos un servicio")]
+        [MinLength(1, ErrorMessage = "Debe seleccionar al menos un servicio")]
+        public List<OrderItemDto> Items { get; set; } = new();
+
+        public string? Observaciones { get; set; }
+    }
+
+    public class OrderItemDto
+    {
+        [Required] public int ServicioId { get; set; }
+        [Required][Range(1, 100)] public int Cantidad { get; set; } = 1;
+    }
+
+    public class ServiceOrderDto
+    {
+        public int Id { get; set; }
+        public int ClienteId { get; set; }
+        public string NombreCliente { get; set; } = string.Empty;
+        public string EmailCliente { get; set; } = string.Empty;
+        public string NumeroOrden { get; set; } = string.Empty;
+        public decimal Subtotal { get; set; }
+        public decimal Total { get; set; }
+        public string Estado { get; set; } = string.Empty;
+        public DateTime FechaCreacion { get; set; }
+        public DateTime? FechaPago { get; set; }
+        public string? Observaciones { get; set; }
+        public List<ServiceOrderDetailDto> Detalles { get; set; } = new();
+    }
+
+    public class ServiceOrderDetailDto
+    {
+        public int Id { get; set; }
+        public int ServicioId { get; set; }
+        public string NombreServicio { get; set; } = string.Empty;
+        public int Cantidad { get; set; }
+        public decimal PrecioUnitario { get; set; }
+        public decimal Subtotal { get; set; }
+    }
+
+    // ── Payment Transaction DTOs ────────────────────────────────────────────
+
+    public class CreatePaymentSessionDto
+    {
+        [Required] public int OrderId { get; set; }
+        /// <summary>Método de pago preferido: card (tarjeta) o qr</summary>
+        public string MetodoPago { get; set; } = "card";
+    }
+
+    public class PaymentSessionResponseDto
+    {
+        public string SessionId { get; set; } = string.Empty;
+        public string PaymentUrl { get; set; } = string.Empty;
+        public int OrderId { get; set; }
+    }
+
+    public class PaymentTransactionDto
+    {
+        public int Id { get; set; }
+        public int ServiceOrderId { get; set; }
+        public string NumeroOrden { get; set; } = string.Empty;
+        public string? TransactionId { get; set; }
+        public string Estado { get; set; } = string.Empty;
+        public decimal Monto { get; set; }
+        public string Moneda { get; set; } = string.Empty;
+        public string? MetodoPago { get; set; }
+        public string? ReferenciaPasarela { get; set; }
+        public DateTime FechaCreacion { get; set; }
+        public DateTime? FechaPago { get; set; }
+        public string ProveedorPago { get; set; } = string.Empty;
+        public string? ComprobantePdfUrl { get; set; }
+        public string NombreCliente { get; set; } = string.Empty;
+        public string EmailCliente { get; set; } = string.Empty;
+        public List<ServiceOrderDetailDto>? DetallesOrden { get; set; }
+    }
+
+    public class PaymentStatusDto
+    {
+        public int OrderId { get; set; }
+        public string NumeroOrden { get; set; } = string.Empty;
+        public string Estado { get; set; } = string.Empty;
+        public decimal Monto { get; set; }
+        public string? MetodoPago { get; set; }
+        public DateTime? FechaPago { get; set; }
+    }
+
+    // ── Admin Payment Stats DTOs ────────────────────────────────────────────
+
+    public class PaymentStatsDto
+    {
+        public decimal TotalRecaudado { get; set; }
+        public int TotalTransacciones { get; set; }
+        public int PagosPendientes { get; set; }
+        public int PagosExitosos { get; set; }
+        public int PagosFallidos { get; set; }
+        public int PagosCancelados { get; set; }
+        public List<GraficoDto> IngresosDiarios { get; set; } = new();
+        public List<GraficoDto> IngresosMensuales { get; set; } = new();
+        public List<GraficoDto> IngresosAnuales { get; set; } = new();
+    }
+
+    public class PaymentFilterDto
+    {
+        public int? UsuarioId { get; set; }
+        public string? Estado { get; set; }
+        public DateTime? FechaInicio { get; set; }
+        public DateTime? FechaFin { get; set; }
+        public string? Busqueda { get; set; }
     }
 }

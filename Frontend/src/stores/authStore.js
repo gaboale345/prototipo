@@ -1,10 +1,19 @@
 import { defineStore } from 'pinia'
 import api from '../services/api'
 
+const getStoredUser = () => {
+  try {
+    const raw = localStorage.getItem('ecowash_user')
+    return raw && raw !== 'undefined' ? JSON.parse(raw) : null
+  } catch (e) {
+    return null
+  }
+}
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('ecowash_token') || '',
-    usuario: JSON.parse(localStorage.getItem('ecowash_user') || 'null')
+    usuario: getStoredUser()
   }),
 
   getters: {

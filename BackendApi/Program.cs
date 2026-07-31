@@ -1,10 +1,18 @@
 using System.Text;
 using BackendApi.Data;
 using BackendApi.Helpers;
+using BackendApi.Middleware;
+using BackendApi.Services.Email;
+using BackendApi.Services.Payments;
+using BackendApi.Services.Pdf;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
+// Cargar variables de entorno desde archivo .env (si existe)
+// Las credenciales sensibles NUNCA se almacenan en el código
+DotNetEnv.Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,9 +54,16 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// Helpers
+// ── Helpers ──────────────────────────────────────────────────────────────────
 builder.Services.AddScoped<JwtHelper>();
 builder.Services.AddScoped<AuditoriaHelper>();
+
+// ── Servicios nuevos (Patrón Strategy para pasarela de pagos) ────────────────
+// IPaymentGateway: Abstracción que permite cambiar de Stripe a otro proveedor
+// sin modificar la lógica principal del sistema.
+builder.Services.AddScoped<IPaymentGateway, StripePaymentGateway>();
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+builder.Services.AddScoped<IPdfService, PdfReceiptService>();
 
 // CORS
 builder.Services.AddCors(options =>
@@ -123,6 +138,10 @@ if (app.Environment.IsDevelopment() || true)
         c.RoutePrefix = "swagger";
     });
 }
+
+// ── Middleware de seguridad ──────────────────────────────────────────────────
+app.UseMiddleware<SecurityHeadersMiddleware>(); // Headers anti-XSS, clickjacking, MIME sniffing
+app.UseMiddleware<RateLimitingMiddleware>();     // Rate limiting para login y verificación
 
 app.UseCors("AllowAll");
 app.UseAuthentication();

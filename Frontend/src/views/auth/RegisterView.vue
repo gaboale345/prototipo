@@ -81,8 +81,11 @@ const handleRegister = async () => {
   loading.value = false
 
   if (res.success) {
-    success.value = '¡Cuenta registrada con éxito! Redirigiendo...'
-    setTimeout(() => router.push('/login'), 1500)
+    success.value = '¡Cuenta registrada con éxito! Te enviamos un código de verificación.'
+    localStorage.setItem('unverified_email', form.value.email)
+    setTimeout(() => {
+      router.push({ path: '/verify-email', query: { email: form.value.email } })
+    }, 1500)
   } else {
     error.value = res.message
   }

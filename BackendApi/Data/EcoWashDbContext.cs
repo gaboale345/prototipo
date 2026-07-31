@@ -40,6 +40,12 @@ namespace BackendApi.Data
         public DbSet<Auditoria> Auditorias { get; set; }
         public DbSet<Reporte> Reportes { get; set; }
 
+        // ── Nuevas entidades para pagos, verificación y órdenes ──────────────────
+        public DbSet<EmailVerification> EmailVerifications { get; set; }
+        public DbSet<ServiceOrder> ServiceOrders { get; set; }
+        public DbSet<ServiceOrderDetail> ServiceOrderDetails { get; set; }
+        public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -218,6 +224,60 @@ namespace BackendApi.Data
             modelBuilder.Entity<Servicio>(entity =>
             {
                 entity.Property(s => s.Precio).HasPrecision(10, 2);
+            });
+
+            // ── Configuración EmailVerification ─────────────────────────────────
+            modelBuilder.Entity<EmailVerification>(entity =>
+            {
+                entity.HasOne(e => e.Usuario)
+                      .WithMany()
+                      .HasForeignKey(e => e.UsuarioId)
+                      .OnDelete(DeleteBehavior.Cascade);
+                entity.HasIndex(e => new { e.UsuarioId, e.Codigo });
+            });
+
+            // ── Configuración ServiceOrder ───────────────────────────────────────
+            modelBuilder.Entity<ServiceOrder>(entity =>
+            {
+                entity.HasIndex(o => o.NumeroOrden).IsUnique();
+                entity.HasOne(o => o.Cliente)
+                      .WithMany()
+                      .HasForeignKey(o => o.ClienteId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.Property(o => o.Subtotal).HasPrecision(10, 2);
+                entity.Property(o => o.Total).HasPrecision(10, 2);
+            });
+
+            // ── Configuración ServiceOrderDetail ────────────────────────────────
+            modelBuilder.Entity<ServiceOrderDetail>(entity =>
+            {
+                entity.HasOne(d => d.ServiceOrder)
+                      .WithMany(o => o.Detalles)
+                      .HasForeignKey(d => d.ServiceOrderId)
+                      .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.Servicio)
+                      .WithMany()
+                      .HasForeignKey(d => d.ServicioId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.Property(d => d.PrecioUnitario).HasPrecision(10, 2);
+                entity.Property(d => d.Subtotal).HasPrecision(10, 2);
+            });
+
+            // ── Configuración PaymentTransaction ────────────────────────────────
+            modelBuilder.Entity<PaymentTransaction>(entity =>
+            {
+                entity.HasOne(p => p.ServiceOrder)
+                      .WithMany(o => o.PaymentTransactions)
+                      .HasForeignKey(p => p.ServiceOrderId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(p => p.Usuario)
+                      .WithMany()
+                      .HasForeignKey(p => p.UsuarioId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasIndex(p => p.TransactionId);
+                entity.HasIndex(p => p.StripeSessionId);
+                entity.HasIndex(p => p.StripePaymentIntentId);
+                entity.Property(p => p.Monto).HasPrecision(10, 2);
             });
 
             // ── Seed Data ────────────────────────────────────────────────────────

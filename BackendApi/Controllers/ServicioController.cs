@@ -99,6 +99,9 @@ namespace BackendApi.Controllers
             var s = await _context.Servicios.FindAsync(id);
             if (s == null) return NotFound(ApiResponse<string>.Fail("Servicio no encontrado"));
 
+            // AUDITORÍA: Guardar datos anteriores para registro de cambio de precio
+            var datosAnteriores = new { s.Nombre, s.Precio, s.DuracionMinutos, s.TipoVehiculo, s.Descripcion };
+
             s.Nombre = dto.Nombre;
             s.Descripcion = dto.Descripcion;
             s.Precio = dto.Precio;
@@ -107,9 +110,33 @@ namespace BackendApi.Controllers
 
             await _context.SaveChangesAsync();
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
-            await _auditoria.RegistrarAsync("ActualizarServicio", "Servicios", "Servicio", id, null, dto, userId);
+
+            // Registrar auditoría con datos anteriores y nuevos (especialmente cambio de precio)
+            await _auditoria.RegistrarAsync("ActualizarServicio", "Servicios", "Servicio", id,
+                datosAnteriores, dto, userId, HttpContext.Connection.RemoteIpAddress?.ToString());
 
             return Ok(ApiResponse<string>.Ok("Servicio actualizado correctamente"));
+        }
+
+        /// <summary>
+        /// Activar o desactivar un servicio. Solo administradores.
+        /// </summary>
+        [HttpPut("{id}/toggle")]
+        [Authorize(Roles = "Administrador")]
+        public async Task<ActionResult<ApiResponse<string>>> ToggleServicio(int id)
+        {
+            var s = await _context.Servicios.FindAsync(id);
+            if (s == null) return NotFound(ApiResponse<string>.Fail("Servicio no encontrado"));
+
+            s.Activo = !s.Activo;
+            await _context.SaveChangesAsync();
+
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+            var accion = s.Activo ? "ActivarServicio" : "DesactivarServicio";
+            await _auditoria.RegistrarAsync(accion, "Servicios", "Servicio", id, null,
+                new { s.Activo }, userId, HttpContext.Connection.RemoteIpAddress?.ToString());
+
+            return Ok(ApiResponse<string>.Ok($"Servicio {(s.Activo ? "activado" : "desactivado")} correctamente"));
         }
 
         [HttpDelete("{id}")]

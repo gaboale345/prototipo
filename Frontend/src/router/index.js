@@ -3,6 +3,7 @@ import { useAuthStore } from '../stores/authStore'
 
 import LoginView from '../views/auth/LoginView.vue'
 import RegisterView from '../views/auth/RegisterView.vue'
+import VerifyEmailView from '../views/auth/VerifyEmailView.vue'
 import LandingView from '../views/LandingView.vue'
 import DashboardAdminView from '../views/admin/DashboardAdminView.vue'
 import DashboardClienteView from '../views/cliente/DashboardClienteView.vue'
@@ -11,10 +12,16 @@ import ReservarView from '../views/cliente/ReservarView.vue'
 import MisVehiculosView from '../views/cliente/MisVehiculosView.vue'
 import MisReservasView from '../views/cliente/MisReservasView.vue'
 import MisUbicacionesView from '../views/cliente/MisUbicacionesView.vue'
+import CatalogoServiciosView from '../views/cliente/CatalogoServiciosView.vue'
+import ResumenOrdenView from '../views/cliente/ResumenOrdenView.vue'
+import MisPagosView from '../views/cliente/MisPagosView.vue'
+import PagoExitoView from '../views/cliente/PagoExitoView.vue'
+import PagoCanceladoView from '../views/cliente/PagoCanceladoView.vue'
 import ReservasAdminView from '../views/admin/ReservasAdminView.vue'
 import ServiciosAdminView from '../views/admin/ServiciosAdminView.vue'
 import InventarioAdminView from '../views/admin/InventarioAdminView.vue'
 import VentasAdminView from '../views/admin/VentasAdminView.vue'
+import PagosAdminView from '../views/admin/PagosAdminView.vue'
 import ReportesAdminView from '../views/admin/ReportesAdminView.vue'
 import AuditoriaAdminView from '../views/admin/AuditoriaAdminView.vue'
 import ClientesAdminView from '../views/admin/ClientesAdminView.vue'
@@ -25,6 +32,7 @@ const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', component: LoginView, meta: { guestOnly: true, publicLayout: true } },
   { path: '/registro', component: RegisterView, meta: { guestOnly: true, publicLayout: true } },
+  { path: '/verify-email', component: VerifyEmailView, meta: { guestOnly: true, publicLayout: true } },
 
   // Admin Routes
   { path: '/admin/dashboard', component: DashboardAdminView, meta: { requiresAuth: true, role: 'Administrador' } },
@@ -34,12 +42,18 @@ const routes = [
   { path: '/admin/empleados', component: EmpleadosAdminView, meta: { requiresAuth: true, role: 'Administrador' } },
   { path: '/admin/inventario', component: InventarioAdminView, meta: { requiresAuth: true, role: 'Administrador' } },
   { path: '/admin/ventas', component: VentasAdminView, meta: { requiresAuth: true, role: 'Administrador' } },
+  { path: '/admin/pagos', component: PagosAdminView, meta: { requiresAuth: true, role: 'Administrador' } },
   { path: '/admin/reportes', component: ReportesAdminView, meta: { requiresAuth: true, role: 'Administrador' } },
   { path: '/admin/auditoria', component: AuditoriaAdminView, meta: { requiresAuth: true, role: 'Administrador' } },
   { path: '/admin/usuarios', component: ClientesAdminView, meta: { requiresAuth: true, role: 'Administrador' } },
 
   // Cliente Routes
   { path: '/cliente/dashboard', component: DashboardClienteView, meta: { requiresAuth: true, role: 'Cliente' } },
+  { path: '/cliente/catalogo', component: CatalogoServiciosView, meta: { requiresAuth: true, role: 'Cliente' } },
+  { path: '/cliente/orden/resumen', component: ResumenOrdenView, meta: { requiresAuth: true, role: 'Cliente' } },
+  { path: '/cliente/pagos', component: MisPagosView, meta: { requiresAuth: true, role: 'Cliente' } },
+  { path: '/cliente/pago/exito', component: PagoExitoView, meta: { requiresAuth: true, role: 'Cliente' } },
+  { path: '/cliente/pago/cancelado', component: PagoCanceladoView, meta: { requiresAuth: true, role: 'Cliente' } },
   { path: '/cliente/reservar', component: ReservarView, meta: { requiresAuth: true, role: 'Cliente' } },
   { path: '/cliente/reservas', component: MisReservasView, meta: { requiresAuth: true, role: 'Cliente' } },
   { path: '/cliente/vehiculos', component: MisVehiculosView, meta: { requiresAuth: true, role: 'Cliente' } },

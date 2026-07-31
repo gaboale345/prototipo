@@ -193,13 +193,28 @@
               </div>
             </div>
 
+            <!-- Opción 1: Pasarela de Pagos API (Stripe) -->
+            <div class="p-3 border rounded-3 mb-3 bg-light">
+              <h6 class="fw-bold text-success mb-1">
+                <i class="bi bi-shield-lock-fill me-1"></i>Pagar Online con Pasarela (Stripe)
+              </h6>
+              <p class="text-muted small mb-2">Paga de forma segura usando tarjeta de débito, crédito o QR con comprobante automático.</p>
+              <button type="button" class="btn btn-success w-100 fw-bold py-2" @click="pagarConPasarela" :disabled="loadingPasarela">
+                <span v-if="loadingPasarela" class="spinner-border spinner-border-sm me-1"></span>
+                <i v-else class="bi bi-credit-card-2-front me-1"></i>
+                Pagar Bs. {{ selectedReserva.precioTotal }} en Pasarela Online
+              </button>
+            </div>
+
+            <hr class="my-3" />
+            <div class="small text-muted fw-bold mb-2">O Registrar Pago Manual:</div>
+
             <div class="mb-3">
-              <label class="form-label fw-semibold">Método de Pago</label>
+              <label class="form-label fw-semibold">Método de Pago Manual</label>
               <select v-model="pagoForm.metodoPagoId" class="form-select">
                 <option :value="1">Efectivo al lavador</option>
-                <option :value="2">Pago por QR</option>
+                <option :value="2">Pago por QR (Manual)</option>
                 <option :value="3">Transferencia Bancaria</option>
-                <option :value="4">Tarjeta Débito/Crédito</option>
               </select>
             </div>
 
@@ -210,7 +225,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="selectedReserva = null">Cancelar</button>
-            <button type="button" class="btn btn-success fw-bold" @click="procesarPago">Confirmar Pago</button>
+            <button type="button" class="btn btn-outline-success fw-bold" @click="procesarPago">Registrar Pago Manual</button>
           </div>
         </div>
       </div>
@@ -276,6 +291,7 @@ const reservaCalificar = ref(null)
 const selectedReserva = ref(null)
 const loadingEdit = ref(false)
 const loadingCalificacion = ref(false)
+const loadingPasarela = ref(false)
 const errorEditFecha = ref('')
 
 const editForm = ref({
@@ -406,6 +422,24 @@ const cancelarReserva = async (r) => {
 // Abrir pago
 const abrirModalPago = (r) => {
   selectedReserva.value = r
+}
+
+// Pagar con Pasarela de Pagos API (Stripe)
+const pagarConPasarela = async () => {
+  if (!selectedReserva.value) return
+  loadingPasarela.value = true
+  try {
+    const res = await api.post(`/Payment/create-session-reserva/${selectedReserva.value.id}`)
+    if (res.data.success && res.data.data.paymentUrl) {
+      window.location.href = res.data.data.paymentUrl
+    } else {
+      Swal.fire('Error', res.data.message || 'No se pudo generar la sesión de pago.', 'error')
+    }
+  } catch (e) {
+    Swal.fire('Error de Pago', e.response?.data?.message || 'Error al conectar con la pasarela de pagos', 'error')
+  } finally {
+    loadingPasarela.value = false
+  }
 }
 
 const procesarPago = async () => {
